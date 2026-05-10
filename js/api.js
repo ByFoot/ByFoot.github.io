@@ -1,6 +1,6 @@
 // api.js — All API calls, JWT injection, token refresh
 
-const API_BASE = "https://api.byfoot.up.railway.app"; // backend URL
+const API_BASE = "https://byfoot.up.railway.app"; // backend URL
 
 async function apiFetch(path, options = {}) {
   const res = await fetch(API_BASE + path, {

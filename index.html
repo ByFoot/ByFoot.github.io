@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f0f0f">
+  <meta name="description" content="ByFoot — Le marché de votre quartier">
+
+  <title>ByFoot</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+  <div id="app">
+    <main id="app-main">
+      <!-- Pages rendered here by router -->
+    </main>
+    <nav id="app-nav" style="display:none">
+      <!-- Nav rendered by nav.js -->
+    </nav>
+  </div>
+
+  <!-- i18n (must load before app) -->
+  <script src="js/i18n.js"></script>
+
+  <!-- API layer -->
+  <script src="js/api.js"></script>
+
+  <!-- Components -->
+  <script src="js/components/reputation-badge.js"></script>
+  <script src="js/components/post-card.js"></script>
+  <script src="js/components/board-message.js"></script>
+  <script src="js/components/nav.js"></script>
+
+  <!-- Pages -->
+  <script src="js/pages/login.js"></script>
+  <script src="js/pages/feed.js"></script>
+  <script src="js/pages/post-form.js"></script>
+  <script src="js/pages/board.js"></script>
+  <script src="js/pages/chat-list.js"></script>
+  <script src="js/pages/chat-detail.js"></script>
+  <script src="js/pages/profile.js"></script>
+  <script src="js/pages/settings.js"></script>
+
+  <!-- Router + boot (last) -->
+  <script src="js/app.js"></script>
+</body>
+</html>

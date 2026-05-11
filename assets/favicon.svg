@@ -1,0 +1,104 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="ring" x1="220" y1="260" x2="804" y2="764" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00A3FF"/>
+      <stop offset="38%" stop-color="#FF5A36"/>
+      <stop offset="68%" stop-color="#FFC400"/>
+      <stop offset="100%" stop-color="#32D26E"/>
+    </linearGradient>
+
+    <linearGradient id="pin" x1="430" y1="300" x2="610" y2="570" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FF8A1F"/>
+      <stop offset="100%" stop-color="#FFD400"/>
+    </linearGradient>
+
+    <linearGradient id="leftPerson" x1="280" y1="500" x2="470" y2="760" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#14B8FF"/>
+      <stop offset="100%" stop-color="#0066FF"/>
+    </linearGradient>
+
+    <linearGradient id="rightPerson" x1="560" y1="500" x2="760" y2="760" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#B7E532"/>
+      <stop offset="100%" stop-color="#00B67A"/>
+    </linearGradient>
+
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1024" height="1024" fill="black"/>
+
+  <!-- Outer ring -->
+  <g filter="url(#softGlow)">
+    <path d="M292 312
+             A320 320 0 0 1 732 312"
+          stroke="url(#ring)"
+          stroke-width="24"
+          stroke-linecap="round"
+          fill="none"/>
+
+    <path d="M758 348
+             A320 320 0 1 1 266 348"
+          stroke="url(#ring)"
+          stroke-width="24"
+          stroke-linecap="round"
+          fill="none"/>
+
+    <rect x="274" y="476" width="16" height="40" rx="8" fill="#0EA5FF"/>
+    <rect x="734" y="476" width="16" height="40" rx="8" fill="#9BEA3C"/>
+  </g>
+
+  <!-- Pin -->
+  <g filter="url(#softGlow)">
+    <path d="M512 290
+             C438 290 386 344 386 416
+             C386 520 512 636 512 636
+             C512 636 638 520 638 416
+             C638 344 586 290 512 290Z"
+          fill="url(#pin)"/>
+
+    <path d="M512 366
+             C480 366 458 390 458 420
+             C458 448 512 506 512 506
+             C512 506 566 448 566 420
+             C566 390 544 366 512 366Z"
+          fill="white"/>
+
+    <circle cx="512" cy="420" r="28" fill="url(#pin)"/>
+  </g>
+
+  <!-- Center separator -->
+  <path d="M456 606
+           C484 610 498 622 512 644
+           C526 622 540 610 568 606
+           C550 626 534 642 512 666
+           C490 642 474 626 456 606Z"
+        fill="#EAF6FF"/>
+
+  <!-- Left person -->
+  <g filter="url(#softGlow)">
+    <circle cx="402" cy="560" r="62" fill="url(#leftPerson)"/>
+
+    <path d="M324 706
+             C324 634 362 598 402 598
+             C452 598 494 644 494 742
+             C440 742 378 730 324 706Z"
+          fill="url(#leftPerson)"/>
+  </g>
+
+  <!-- Right person -->
+  <g filter="url(#softGlow)">
+    <circle cx="622" cy="560" r="62" fill="url(#rightPerson)"/>
+
+    <path d="M700 706
+             C700 634 662 598 622 598
+             C572 598 530 644 530 742
+             C584 742 646 730 700 706Z"
+          fill="url(#rightPerson)"/>
+  </g>
+</svg>

@@ -34,11 +34,11 @@ async function apiFetch(path, options = {}) {
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 const API = {
-  async loginGoogle(id_token) {
+  async loginGoogle(access_token) {
     return fetch(API_BASE + "/auth/social/google/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id_token }),
+      body: JSON.stringify({ access_token }),
     });
   },
 

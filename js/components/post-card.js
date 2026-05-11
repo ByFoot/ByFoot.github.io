@@ -44,13 +44,14 @@ function postCard(post, { showActions = true, isOwn = false, onMessage, onDelete
       </header>
 
       <div class="post-card__body">
-        <p class="post-text">${escapeHtml(post.text)}</p>
+        ${post.image_url ? `<img class="post-image" src="${escapeHtml(post.image_url)}" alt="">` : ""}
+        <p class="post-text">${escapeHtml(post.title)}</p>
         ${post.price ? `<p class="post-price">${escapeHtml(post.price)}</p>` : ""}
       </div>
 
       <footer class="post-card__footer">
         <span class="post-author">@${escapeHtml(post.author_username)}</span>
-        <span class="post-expiry">${t("post.expires")} ${formatExpiry(post.expires_at)}</span>
+        <span class="post-expiry">${t("post.expires")} ${escapeHtml(post.expires_in ?? "")}</span>
 
         ${showActions && !isOwn ? `
           <button class="btn btn--ghost btn--sm post-msg-btn" data-post-id="${post.id}" data-author="${escapeHtml(post.author_username)}">

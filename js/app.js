@@ -10,7 +10,6 @@ const ROUTES = [
   { pattern: /^\/login$/,           page: "login"       },
   { pattern: /^\/feed$/,            page: "feed"        },
   { pattern: /^\/new-post$/,        page: "post-form"   },
-  { pattern: /^\/board$/,           page: "board"       },
   { pattern: /^\/chat$/,            page: "chat-list"   },
   { pattern: /^\/chat\/(\d+)$/,     page: "chat-detail" },
   { pattern: /^\/profile$/,         page: "profile-self" },
@@ -56,7 +55,6 @@ const ROUTER = {
       case "login":       main.innerHTML = renderLogin();            initLogin();            break;
       case "feed":        main.innerHTML = renderFeed();             initFeed();             break;
       case "post-form":   main.innerHTML = renderPostForm();         initPostForm();         break;
-      case "board":       main.innerHTML = renderBoard();            initBoard();            break;
       case "chat-list":   main.innerHTML = renderChatList();         initChatList();         break;
       case "chat-detail": main.innerHTML = renderChatDetail(id);    initChatDetail(id);     break;
       case "profile-self":

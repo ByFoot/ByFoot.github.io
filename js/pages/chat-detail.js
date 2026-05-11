@@ -11,9 +11,6 @@ function renderChatDetail(id) {
       <header class="page-header chat-detail-header">
         <button class="btn-back" onclick="stopChatPoll(); history.back()">←</button>
         <h2 class="page-title" id="chat-other-user">…</h2>
-        <button class="btn btn--ghost btn--sm btn--danger-ghost" id="chat-delete-btn">
-          ${t("chat.delete_request")}
-        </button>
       </header>
 
       <div id="chat-messages" class="chat-messages">
@@ -52,7 +49,6 @@ async function initChatDetail(id) {
     }
   });
 
-  document.getElementById("chat-delete-btn")?.addEventListener("click", requestDelete);
 }
 
 async function loadMessages(id) {
@@ -100,27 +96,6 @@ async function sendChatMessage() {
   } else if (res) {
     const msg = await parseError(res);
     showError(document.querySelector(".chat-composer"), msg);
-  }
-}
-
-async function requestDelete() {
-  if (!confirm(t("chat.delete_confirm"))) return;
-
-  const btn = document.getElementById("chat-delete-btn");
-  btn.disabled = true;
-
-  const res = await API.requestChatDelete(currentChatId);
-  if (!res || !res.ok) {
-    btn.disabled = false;
-    return;
-  }
-  const data = await res.json();
-
-  if (data.detail?.includes("deleted") || data.detail?.includes("supprimée")) {
-    stopChatPoll();
-    location.hash = "#/chat";
-  } else {
-    btn.textContent = "Demande envoyée";
   }
 }
 

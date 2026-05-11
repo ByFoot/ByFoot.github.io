@@ -41,8 +41,6 @@ function renderSettings() {
           ${[
             ["notif_new_post",       "settings.notif_new_post"],
             ["notif_new_chat",       "settings.notif_new_chat"],
-            ["notif_new_board",      "settings.notif_new_board"],
-            ["notif_delete_request", "settings.notif_delete_request"],
           ].map(([key, label]) => `
             <div class="settings-toggle-row">
               <span class="settings-toggle-label">${t(label)}</span>
@@ -52,6 +50,19 @@ function renderSettings() {
               </label>
             </div>
           `).join("")}
+        </section>
+
+        <!-- Chat expiry -->
+        <section class="settings-section">
+          <h3 class="settings-section-title">${t("settings.chat_expiry")}</h3>
+          <div class="settings-row">
+            <label class="form-label" for="chat-expiry">${t("settings.chat_expiry")}</label>
+            <div class="settings-inline">
+              <input class="input input--sm" type="number" id="chat-expiry" min="1" max="30">
+              <button class="btn btn--ghost btn--sm" id="chat-expiry-save">${t("action.save")}</button>
+            </div>
+            <div id="chat-expiry-error" class="error-msg"></div>
+          </div>
         </section>
 
         <!-- Language -->
@@ -103,7 +114,7 @@ async function initSettings() {
   });
 
   // Notification toggles — prefill
-  ["notif_new_post", "notif_new_chat", "notif_new_board", "notif_delete_request"].forEach(key => {
+  ["notif_new_post", "notif_new_chat"].forEach(key => {
     const el = document.getElementById(`toggle-${key}`);
     if (el) el.checked = !!me[key];
   });
@@ -114,6 +125,23 @@ async function initSettings() {
       const val = toggle.checked;
       await API.patchNotifPrefs({ [key]: val });
     });
+  });
+
+  // Chat expiry
+  const chatExpiryInput = document.getElementById("chat-expiry");
+  chatExpiryInput.value = me.chat_expiry_days ?? 1;
+  document.getElementById("chat-expiry-save")?.addEventListener("click", async () => {
+    const errEl = document.getElementById("chat-expiry-error");
+    errEl.textContent = "";
+    const val = parseInt(chatExpiryInput.value, 10);
+    if (!val || val < 1) return;
+    const res = await API.patchChatExpiry(val);
+    if (!res || !res.ok) {
+      const msg = await parseError(res);
+      errEl.textContent = msg;
+    } else {
+      window.APP.me.chat_expiry_days = val;
+    }
   });
 
   // Username save

@@ -35,11 +35,11 @@ function initLogin() {
 
   /*
   document.getElementById("login-apple")?.addEventListener("click", () => {
-    // POC: replace with real Sign in with Apple to get code or id_token.
-    const code = prompt("Apple code (POC):");
-    const idToken = code ? "" : prompt("Apple id_token (POC):");
-    if (!code && !idToken) return;
-    handleSocialLogin(() => API.loginApple({ code, id_token: idToken }));
+    // POC: replace with real Sign in with Apple to get access_token or id_token.
+    const accessToken = prompt("Apple access_token (POC):");
+    const idToken = accessToken ? "" : prompt("Apple id_token (POC):");
+    if (!accessToken && !idToken) return;
+    handleSocialLogin(() => API.loginApple({ access_token: accessToken, id_token: idToken }));
   });
   */
 }

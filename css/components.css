@@ -1,4 +1,4 @@
-/* components.css — Post cards, board messages, chat items, badges */
+/* components.css — Post cards, chat items, badges */
 
 /* ── Post list ─────────────────────────────────────────────────────────────── */
 .post-list {
@@ -76,6 +76,13 @@
   font-size: 0.95rem;
   line-height: 1.55;
   color: var(--c-text);
+}
+
+.post-image {
+  width: 100%;
+  height: auto;
+  border-radius: var(--r-md);
+  border: 1px solid var(--c-border);
 }
 
 .post-price {
@@ -185,108 +192,6 @@
 .type-btn--lend:hover, .type-btn--lend.type-btn--active   { border-color: var(--c-lend);   color: var(--c-lend);   background: rgba(200,245,58,0.1); }
 .type-btn--borrow:hover,.type-btn--borrow.type-btn--active { border-color: var(--c-borrow); color: var(--c-borrow); background: rgba(224,96,208,0.1); }
 
-/* ── Board messages ────────────────────────────────────────────────────────── */
-.board-new {
-  padding: var(--sp-4);
-  border-bottom: 1px solid var(--c-border);
-  display: flex;
-  gap: var(--sp-3);
-  align-items: flex-end;
-}
-.board-new-input {
-  height: 70px;
-}
-
-.board-list {
-  padding: var(--sp-3) var(--sp-4);
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-1);
-}
-
-.board-msg {
-  padding: var(--sp-4);
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: var(--r-lg);
-  animation: fadeIn 0.2s ease;
-}
-
-.board-msg--admin {
-  border-color: var(--c-accent-dim);
-  background: rgba(200,245,58,0.04);
-}
-
-.board-msg--reply {
-  border-color: transparent;
-  background: var(--c-surface-2);
-  border-radius: var(--r-md);
-  margin-left: var(--sp-4);
-}
-
-.board-admin-badge {
-  font-size: 0.65rem;
-  font-family: var(--font-mono);
-  padding: 2px 7px;
-  border-radius: var(--r-full);
-  background: var(--c-accent-soft);
-  color: var(--c-accent);
-  border: 1px solid rgba(200,245,58,0.3);
-  text-transform: uppercase;
-}
-
-.board-msg__meta {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  margin-bottom: var(--sp-2);
-  flex-wrap: wrap;
-}
-
-.board-msg__author {
-  font-size: 0.8rem;
-  font-family: var(--font-mono);
-  color: var(--c-text-muted);
-}
-
-.board-msg__time {
-  font-size: 0.72rem;
-  font-family: var(--font-mono);
-  color: var(--c-text-dim);
-  margin-left: auto;
-}
-
-.board-msg__text {
-  font-size: 0.9rem;
-  line-height: 1.5;
-  margin-bottom: var(--sp-3);
-}
-
-.board-msg__actions {
-  display: flex;
-  gap: var(--sp-2);
-}
-
-.reply-count {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: var(--c-text-dim);
-}
-
-.board-replies {
-  margin-top: var(--sp-3);
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-2);
-}
-
-.board-reply-form {
-  margin-top: var(--sp-3);
-  display: flex;
-  gap: var(--sp-2);
-  align-items: flex-end;
-}
-
 /* ── Chat list ─────────────────────────────────────────────────────────────── */
 .chat-list {
   display: flex;
@@ -350,14 +255,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.chat-delete-badge {
-  display: inline-block;
-  font-size: 0.7rem;
-  font-family: var(--font-mono);
-  color: var(--c-red);
-  margin-top: var(--sp-1);
 }
 
 /* ── Chat detail ───────────────────────────────────────────────────────────── */

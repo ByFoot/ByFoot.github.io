@@ -148,10 +148,10 @@ function renderProfilePosts(posts, isOwn) {
     }
 
     if (action === "reactivate") {
-      const newExpiry = prompt("Nouvelle date d'expiration (YYYY-MM-DD):", new Date(Date.now() + 86400000 * 14).toISOString().slice(0, 10));
-      if (!newExpiry) return;
+      const newExpiryDays = prompt("Nouveau delai d'expiration (jours):", "7");
+      if (!newExpiryDays) return;
       btn.disabled = true;
-      const res = await API.patchPost(postId, { expires_at: new Date(newExpiry).toISOString() });
+      const res = await API.patchPost(postId, { expires_in: `${newExpiryDays} 00:00:00` });
       if (res && res.ok) {
         const updated = await res.json();
         btn.closest(".post-card").replaceWith(

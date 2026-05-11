@@ -122,9 +122,12 @@ async function sendMessage() {
   const btn = document.getElementById("msg-send");
   btn.disabled = true;
 
-  // We need recipient_id — fetch from post author. For POC, author_id would be in the post.
-  // If API returns author_id, use it. Otherwise we'd need a separate lookup.
-  const recipient_id = post.author_id ?? post.author_username; // use what's available
+  const recipient_id = post.author_id;
+  if (!recipient_id) {
+    document.getElementById("msg-error").textContent = t("error.generic");
+    btn.disabled = false;
+    return;
+  }
 
   const res = await API.createChat(recipient_id, text);
   btn.disabled = false;

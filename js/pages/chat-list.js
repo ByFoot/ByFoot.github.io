@@ -30,9 +30,8 @@ async function initChatList() {
   }
 
   list.innerHTML = convs.map(conv => {
-    const hasPendingDelete = conv.initiator_wants_delete || conv.recipient_wants_delete;
     return `
-      <a href="#/chat/${conv.id}" class="chat-item${hasPendingDelete ? " chat-item--pending-delete" : ""}">
+      <a href="#/chat/${conv.id}" class="chat-item">
         <div class="chat-item__avatar">@</div>
         <div class="chat-item__body">
           <div class="chat-item__header">
@@ -40,7 +39,6 @@ async function initChatList() {
             <span class="chat-item__time">${formatRelative(conv.last_message_at)}</span>
           </div>
           <p class="chat-item__preview">${escapeHtml(conv.last_message ?? "")}</p>
-          ${hasPendingDelete ? `<span class="chat-delete-badge">Suppression demandée</span>` : ""}
         </div>
       </a>
     `;

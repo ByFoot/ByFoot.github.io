@@ -42,11 +42,11 @@ const API = {
     });
   },
 
-  async loginApple({ code, id_token }) {
+  async loginApple({ access_token, id_token }) {
     return fetch(API_BASE + "/auth/social/apple/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(code ? { code } : { id_token }),
+      body: JSON.stringify(access_token ? { access_token } : { id_token }),
     });
   },
 
@@ -83,9 +83,28 @@ const API = {
     });
   },
 
+  async patchChatExpiry(chat_expiry_days) {
+    return apiFetch("/me/chat-expiry/", {
+      method: "PATCH",
+      body: JSON.stringify({ chat_expiry_days }),
+    });
+  },
+
   // ── Posts ──────────────────────────────────────────────────────────────────
   async getPosts() {
     return apiFetch("/posts/");
+  },
+
+  async uploadPostImage(file) {
+    const formData = new FormData();
+    formData.append("file", file);
+    return fetch(API_BASE + "/posts/upload/", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${window.APP.jwt}`,
+      },
+      body: formData,
+    });
   },
 
   async createPost(data) {
@@ -110,29 +129,6 @@ const API = {
     return apiFetch(`/posts/${id}/boost/`, { method: "POST" });
   },
 
-  // ── Board ──────────────────────────────────────────────────────────────────
-  async getBoard() {
-    return apiFetch("/board/");
-  },
-
-  async postBoardMessage(text) {
-    return apiFetch("/board/post/", {
-      method: "POST",
-      body: JSON.stringify({ text }),
-    });
-  },
-
-  async replyBoardMessage(id, text) {
-    return apiFetch(`/board/${id}/reply/`, {
-      method: "POST",
-      body: JSON.stringify({ text }),
-    });
-  },
-
-  async deleteBoardMessage(id) {
-    return apiFetch(`/board/${id}/`, { method: "DELETE" });
-  },
-
   // ── Chat ───────────────────────────────────────────────────────────────────
   async getChats() {
     return apiFetch("/chats/");
@@ -154,10 +150,6 @@ const API = {
       method: "POST",
       body: JSON.stringify({ text }),
     });
-  },
-
-  async requestChatDelete(id) {
-    return apiFetch(`/chats/${id}/delete-request/`, { method: "POST" });
   },
 
   // ── Reputation ─────────────────────────────────────────────────────────────

@@ -1,7 +1,6 @@
 // pages/post-form.js
 
 function renderPostForm() {
-  const tomorrow = new Date(Date.now() + 86400000 * 7).toISOString().slice(0, 16);
   return `
     <div class="page post-form-page">
       <header class="page-header">
@@ -23,8 +22,8 @@ function renderPostForm() {
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="post-text">${t("post.text")}</label>
-          <textarea class="input" id="post-text" rows="4" placeholder="Décrivez votre annonce..." required></textarea>
+          <label class="form-label" for="post-title">${t("post.title")}</label>
+          <input class="input" type="text" id="post-title" placeholder="${t("post.title")}" required>
         </div>
 
         <div class="form-group">
@@ -33,8 +32,18 @@ function renderPostForm() {
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="post-expires">${t("post.expires_at")}</label>
-          <input class="input" type="datetime-local" id="post-expires" value="${tomorrow}" required>
+          <label class="form-label">${t("post.expires_in")}</label>
+          <div class="settings-inline">
+            <input class="input input--sm" type="number" id="post-expires-days" min="1" step="1" inputmode="numeric" pattern="[0-9]*" value="1" required>
+            <span class="form-label">${t("post.expires_days")}</span>
+            <input class="input input--sm" type="number" id="post-expires-hours" min="1" step="1" inputmode="numeric" pattern="[0-9]*" value="1" required>
+            <span class="form-label">${t("post.expires_hours")}</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="post-image">${t("post.image")}</label>
+          <input class="input" type="file" id="post-image" accept="image/*">
         </div>
 
         <div id="post-error" class="error-msg"></div>
@@ -63,24 +72,49 @@ function initPostForm() {
 
 async function submitPost() {
   const type = document.getElementById("post-type").value;
-  const text = document.getElementById("post-text").value.trim();
+  const title = document.getElementById("post-title").value.trim();
   const price = document.getElementById("post-price").value.trim();
-  const expires_at = document.getElementById("post-expires").value;
+  const expiresDays = parseInt(document.getElementById("post-expires-days").value, 10);
+  const expiresHours = parseInt(document.getElementById("post-expires-hours").value, 10);
+  const imageFile = document.getElementById("post-image").files[0] || null;
 
   const errorEl = document.getElementById("post-error");
   errorEl.textContent = "";
 
-  if (!text || !expires_at) return;
+  if (!title) return;
+  if (!Number.isInteger(expiresDays) || expiresDays < 1) return;
+  if (!Number.isInteger(expiresHours) || expiresHours < 1) return;
+
+  const imageRequired = type === "buy" || type === "lend";
+  if (imageRequired && !imageFile) {
+    errorEl.textContent = t("error.generic");
+    return;
+  }
 
   const btn = document.getElementById("post-submit");
   btn.disabled = true;
   btn.textContent = "…";
 
+  let image_url = "";
+  if (imageFile) {
+    const uploadRes = await API.uploadPostImage(imageFile);
+    if (!uploadRes || !uploadRes.ok) {
+      btn.disabled = false;
+      btn.textContent = t("action.save");
+      const msg = uploadRes ? await parseError(uploadRes) : t("error.generic");
+      errorEl.textContent = msg;
+      return;
+    }
+    const uploadData = await uploadRes.json();
+    image_url = uploadData.image_url || "";
+  }
+
   const res = await API.createPost({
     type,
-    text,
+    title,
     price,
-    expires_at: new Date(expires_at).toISOString(),
+    image_url,
+    expires_in: `${expiresDays} ${String(expiresHours).padStart(2, "0")}:00:00`,
   });
 
   btn.disabled = false;

@@ -30,15 +30,44 @@ function renderLogin() {
 
 function initLogin() {
   document.getElementById("login-google")?.addEventListener("click", () => {
-    // Redirect to backend OAuth (allauth) which will return to the app.
-    window.location.href = `${API_BASE}/accounts/google/login/`;
+    // POC: replace with real Google Sign-In to get id_token.
+    const idToken = prompt("Google id_token (POC):");
+    if (!idToken) return;
+    handleSocialLogin(() => API.loginGoogle(idToken));
   });
 
   /*
   document.getElementById("login-apple")?.addEventListener("click", () => {
-    // Redirect to backend OAuth (allauth) which will return to the app.
-    window.location.href = `${API_BASE}/accounts/apple/login/`;
+    // POC: replace with real Sign in with Apple to get code or id_token.
+    const code = prompt("Apple code (POC):");
+    const idToken = code ? "" : prompt("Apple id_token (POC):");
+    if (!code && !idToken) return;
+    handleSocialLogin(() => API.loginApple({ code, id_token: idToken }));
   });
   */
+}
+
+async function handleSocialLogin(apiFn) {
+  try {
+    const res = await apiFn();
+    if (!res.ok) {
+      const msg = await parseError(res);
+      showError(document.querySelector(".login-actions"), msg);
+      return;
+    }
+    const data = await res.json();
+    window.APP.jwt = data.access;
+    window.APP.refresh = data.refresh;
+    localStorage.setItem("jwt", data.access);
+    localStorage.setItem("refresh", data.refresh);
+
+    const meRes = await API.getMe();
+    if (meRes && meRes.ok) {
+      window.APP.me = await meRes.json();
+    }
+    location.hash = "#/feed";
+  } catch (e) {
+    showError(document.querySelector(".login-actions"), t("error.generic"));
+  }
 }
 

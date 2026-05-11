@@ -13,6 +13,7 @@ const ROUTES = [
   { pattern: /^\/board$/,           page: "board"       },
   { pattern: /^\/chat$/,            page: "chat-list"   },
   { pattern: /^\/chat\/(\d+)$/,     page: "chat-detail" },
+  { pattern: /^\/profile$/,         page: "profile-self" },
   { pattern: /^\/profile\/(\d+)$/,  page: "profile"     },
   { pattern: /^\/settings$/,        page: "settings"    },
 ];
@@ -37,7 +38,7 @@ const ROUTER = {
     }
 
     const params = path.match(match.pattern);
-    const id = params ? params[1] : null;
+    let id = params ? params[1] : null;
 
     const main = document.getElementById("app-main");
     const nav  = document.getElementById("app-nav");
@@ -58,6 +59,13 @@ const ROUTER = {
       case "board":       main.innerHTML = renderBoard();            initBoard();            break;
       case "chat-list":   main.innerHTML = renderChatList();         initChatList();         break;
       case "chat-detail": main.innerHTML = renderChatDetail(id);    initChatDetail(id);     break;
+      case "profile-self":
+        if (!window.APP.me?.id) {
+          location.hash = "#/login";
+          break;
+        }
+        id = window.APP.me.id;
+        main.innerHTML = renderProfile(id);        initProfile(id);        break;
       case "profile":     main.innerHTML = renderProfile(id);        initProfile(id);        break;
       case "settings":    main.innerHTML = renderSettings();         initSettings();         break;
     }

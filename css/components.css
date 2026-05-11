@@ -603,6 +603,12 @@
   margin-top: var(--sp-3);
 }
 
+#login-google-button {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
 .btn-social {
   display: flex;
   align-items: center;

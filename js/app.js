@@ -85,6 +85,43 @@ function showError(containerEl, msg) {
   el.textContent = msg;
 }
 
+function isStandalonePwa() {
+  return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+}
+
+function shouldShowInstallTip() {
+  if (isStandalonePwa()) return false;
+  if (!/iphone|ipad|ipod/i.test(navigator.userAgent)) return false;
+  return true;
+}
+
+function showInstallTip() {
+  if (!shouldShowInstallTip()) return;
+  if (localStorage.getItem("install_tip_dismissed") === "1") return;
+
+  let banner = document.getElementById("install-tip");
+  if (banner) return;
+
+  banner = document.createElement("div");
+  banner.id = "install-tip";
+  banner.className = "install-tip";
+  banner.innerHTML = `
+    <div class="install-tip__content">
+      <div class="install-tip__text">
+        <strong>${t("install.tip_title")}</strong>
+        <span>${t("install.tip_body")}</span>
+      </div>
+      <button class="btn btn--ghost btn--sm" id="install-tip-dismiss">${t("install.tip_dismiss")}</button>
+    </div>
+  `;
+  document.body.appendChild(banner);
+
+  document.getElementById("install-tip-dismiss")?.addEventListener("click", () => {
+    localStorage.setItem("install_tip_dismissed", "1");
+    banner.remove();
+  });
+}
+
 function hasLocation() {
   const me = window.APP.me;
   if (me?.lat != null && me?.lng != null) return true;
@@ -227,11 +264,13 @@ async function boot() {
   // Handle initial hash
   const hash = location.hash.slice(1) || "/feed";
   ROUTER.navigate(hash);
+  showInstallTip();
   ensureLocationGate();
 
   // Listen for hash changes
   window.addEventListener("hashchange", () => {
     ROUTER.navigate(location.hash.slice(1) || "/feed");
+    showInstallTip();
     ensureLocationGate();
   });
 }

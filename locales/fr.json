@@ -55,6 +55,10 @@
   "location.error": "Acces localisation impossible. Reessayez.",
   "location.denied": "Localisation bloquee. Sur iPhone: menu aA Safari → Reglages du site → Localisation → Autoriser.",
 
+  "install.tip_title": "Installer ByFoot",
+  "install.tip_body": "Touchez Partager → Sur l'ecran d'accueil dans Safari.",
+  "install.tip_dismiss": "Fermer",
+
   "action.save": "Enregistrer",
   "action.cancel": "Annuler",
   "action.message": "Message",

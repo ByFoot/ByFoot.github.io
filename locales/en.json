@@ -55,6 +55,10 @@
   "location.error": "Location access failed. Please try again.",
   "location.denied": "Location is blocked. On iPhone: Safari aA menu → Website Settings → Location → Allow.",
 
+  "install.tip_title": "Install ByFoot",
+  "install.tip_body": "Tap Share → Add to Home Screen in Safari.",
+  "install.tip_dismiss": "Dismiss",
+
   "action.save": "Save",
   "action.cancel": "Cancel",
   "action.message": "Message",

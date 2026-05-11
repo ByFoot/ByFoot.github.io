@@ -107,6 +107,37 @@
   color: var(--c-text-muted);
 }
 
+.install-tip {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--nav-h) + var(--sp-3));
+  transform: translateX(-50%);
+  width: min(520px, 94vw);
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  z-index: 180;
+}
+
+.install-tip__content {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+}
+
+.install-tip__text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+}
+
+.install-tip__text strong {
+  font-size: 0.9rem;
+}
+
 .post-price {
   font-size: 0.9rem;
   font-family: var(--font-mono);

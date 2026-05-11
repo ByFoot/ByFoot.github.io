@@ -31,13 +31,13 @@ function renderLogin() {
 function initLogin() {
   document.getElementById("login-google")?.addEventListener("click", () => {
     // Redirect to backend OAuth (allauth) which will return to the app.
-    window.location.href = `${API_BASE}/auth/social/google/`;
+    window.location.href = `${API_BASE}/accounts/google/login/`;
   });
 
   /*
   document.getElementById("login-apple")?.addEventListener("click", () => {
     // Redirect to backend OAuth (allauth) which will return to the app.
-    window.location.href = `${API_BASE}/auth/social/apple/`;
+    window.location.href = `${API_BASE}/accounts/apple/login/`;
   });
   */
 }

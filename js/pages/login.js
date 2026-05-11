@@ -108,6 +108,8 @@ async function handleSocialLogin(apiFn) {
     window.APP.refresh = data.refresh;
     localStorage.setItem("jwt", data.access);
     localStorage.setItem("refresh", data.refresh);
+    syncPushToken();
+    initPushNotifications({ promptPermission: true });
 
     const meRes = await API.getMe();
     if (meRes && meRes.ok) {

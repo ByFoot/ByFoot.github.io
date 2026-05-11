@@ -26,6 +26,7 @@ async function apiFetch(path, options = {}) {
     const data = await r.json();
     window.APP.jwt = data.access;
     localStorage.setItem("jwt", data.access);
+    syncPushToken();
     return apiFetch(path, options); // retry
   }
 
@@ -34,6 +35,9 @@ async function apiFetch(path, options = {}) {
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 const API = {
+  async getPushConfig() {
+    return fetch(API_BASE + "/push/config/");
+  },
   async loginGoogle(access_token) {
     return fetch(API_BASE + "/auth/social/google/", {
       method: "POST",
@@ -80,6 +84,13 @@ const API = {
     return apiFetch("/me/notification-prefs/", {
       method: "PATCH",
       body: JSON.stringify(prefs),
+    });
+  },
+
+  async patchPushToken(push_token) {
+    return apiFetch("/me/push-token/", {
+      method: "PATCH",
+      body: JSON.stringify({ push_token }),
     });
   },
 
@@ -169,10 +180,17 @@ const API = {
 function logout() {
   localStorage.removeItem("jwt");
   localStorage.removeItem("refresh");
+  localStorage.removeItem("has_location");
   window.APP.jwt = null;
   window.APP.refresh = null;
   window.APP.me = null;
   location.hash = "#/login";
+}
+
+function syncPushToken() {
+  const pushToken = window.APP?.pushToken || localStorage.getItem("push_token");
+  if (!pushToken) return;
+  API.patchPushToken(pushToken).catch(() => {});
 }
 
 async function parseError(res) {

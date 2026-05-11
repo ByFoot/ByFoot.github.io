@@ -172,6 +172,11 @@ async function initSettings() {
         const res = await API.patchLocation(pos.coords.latitude, pos.coords.longitude);
         msgEl.textContent = (res && res.ok) ? t("settings.location_update") : t("settings.location_error");
         if (!res || !res.ok) msgEl.className = "error-msg";
+        if (res && res.ok) {
+          window.APP.me.lat = pos.coords.latitude;
+          window.APP.me.lng = pos.coords.longitude;
+          localStorage.setItem("has_location", "1");
+        }
       },
       () => {
         msgEl.textContent = t("settings.location_error");

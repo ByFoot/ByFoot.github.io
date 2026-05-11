@@ -35,7 +35,7 @@
   "reputation.like": "J'apprécie",
   "reputation.dislike": "Je n'apprécie pas",
 
-  "settings.radius": "Rayon de proximité",
+  "settings.radius": "Rayon de marche",
   "settings.location": "Mettre à jour ma position",
   "settings.notifications": "Notifications",
   "settings.pro": "Abonnement Pro",
@@ -48,7 +48,12 @@
   "settings.pro_desc": "Rayon étendu · Boost quotidien · Changement de pseudo",
   "settings.location_update": "Localisation mise à jour",
   "settings.location_error": "Impossible d'obtenir la position",
-  "settings.minutes": "minutes",
+  "settings.minutes": "min à pied",
+
+  "location.required_title": "Localisation requise",
+  "location.required_body": "ByFoot a besoin de votre position pour afficher les annonces proches.",
+  "location.enable": "Activer la localisation",
+  "location.error": "Acces localisation impossible. Reessayez.",
 
   "action.save": "Enregistrer",
   "action.cancel": "Annuler",

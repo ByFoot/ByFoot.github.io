@@ -35,7 +35,7 @@
   "reputation.like": "Appreciate",
   "reputation.dislike": "Downvote",
 
-  "settings.radius": "Proximity radius",
+  "settings.radius": "Walking radius",
   "settings.location": "Update my location",
   "settings.notifications": "Notifications",
   "settings.pro": "Pro subscription",
@@ -48,7 +48,12 @@
   "settings.pro_desc": "Extended radius · Daily boost · Username change",
   "settings.location_update": "Location updated",
   "settings.location_error": "Could not get location",
-  "settings.minutes": "minutes",
+  "settings.minutes": "min walk",
+
+  "location.required_title": "Location required",
+  "location.required_body": "ByFoot needs your location to show nearby posts and chats.",
+  "location.enable": "Enable location",
+  "location.error": "Location access failed. Please try again.",
 
   "action.save": "Save",
   "action.cancel": "Cancel",

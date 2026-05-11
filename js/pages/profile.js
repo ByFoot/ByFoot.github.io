@@ -45,8 +45,8 @@ async function loadMyProfile() {
       <span class="profile-stat__value">${reputationBadge(me.reputation_score)}</span>
     </div>
     <div class="profile-stat">
-      <span class="profile-stat__label">Rayon</span>
-      <span class="profile-stat__value">${me.radius_minutes} min</span>
+      <span class="profile-stat__label">${t("settings.radius")}</span>
+      <span class="profile-stat__value">${me.radius_minutes} ${t("settings.minutes")}</span>
     </div>
     ${me.is_pro ? `<span class="pro-badge">${t("profile.pro_badge")}</span>` : ""}
   `;

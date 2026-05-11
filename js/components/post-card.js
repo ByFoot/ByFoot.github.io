@@ -1,12 +1,5 @@
 // components/post-card.js
 
-function isToday(dateStr) {
-  if (!dateStr) return false;
-  const d = new Date(dateStr);
-  const now = new Date();
-  return d.toDateString() === now.toDateString();
-}
-
 function formatRelative(dateStr) {
   const d = new Date(dateStr);
   const diffMs = Date.now() - d;
@@ -18,9 +11,23 @@ function formatRelative(dateStr) {
   return t("time.days_ago", { n: Math.floor(diffH / 24) });
 }
 
-function formatExpiry(dateStr) {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString(I18N.lang, { day: "numeric", month: "short" });
+function parseDurationToMs(duration) {
+  if (!duration) return null;
+  const match = String(duration).trim().match(/^(\d+)\s+(\d{1,2}):(\d{2}):(\d{2})$/);
+  if (!match) return null;
+  const days = parseInt(match[1], 10);
+  const hours = parseInt(match[2], 10);
+  const minutes = parseInt(match[3], 10);
+  const seconds = parseInt(match[4], 10);
+  return (((days * 24 + hours) * 60 + minutes) * 60 + seconds) * 1000;
+}
+
+function formatExpiry(post) {
+  const base = post.created_at ? new Date(post.created_at) : new Date();
+  const durationMs = parseDurationToMs(post.expires_in);
+  if (!durationMs || isNaN(base.getTime())) return "";
+  const expiry = new Date(base.getTime() + durationMs);
+  return expiry.toLocaleString(I18N.lang, { dateStyle: "medium", timeStyle: "short" });
 }
 
 const TYPE_COLORS = {
@@ -30,15 +37,14 @@ const TYPE_COLORS = {
   borrow: "type--borrow",
 };
 
-function postCard(post, { showActions = true, isOwn = false, onMessage, onDelete, onBoost, onReactivate } = {}) {
-  const boostedToday = isToday(post.last_boosted_at);
+function postCard(post, { showActions = true, isOwn = false, onMessage, onDelete, onReactivate } = {}) {
   const typeClass = TYPE_COLORS[post.type] || "";
+  const expiryText = formatExpiry(post);
 
   return `
     <article class="post-card" data-post-id="${post.id}">
       <header class="post-card__header">
         <span class="post-type ${typeClass}">${t("post.type." + post.type)}</span>
-        ${boostedToday ? `<span class="post-boosted">${t("post.boosted")}</span>` : ""}
         <span class="post-distance">${post.distance_minutes != null ? `${post.distance_minutes} ${t("post.min_walk")}` : ""}</span>
         ${reputationBadge(post.reputation_score)}
       </header>
@@ -51,7 +57,7 @@ function postCard(post, { showActions = true, isOwn = false, onMessage, onDelete
 
       <footer class="post-card__footer">
         <span class="post-author">@${escapeHtml(post.author_username)}</span>
-        <span class="post-expiry">${t("post.expires")} ${escapeHtml(post.expires_in ?? "")}</span>
+        ${expiryText ? `<span class="post-expiry">${t("post.expires")} ${escapeHtml(expiryText)}</span>` : ""}
 
         ${showActions && !isOwn ? `
           <button class="btn btn--ghost btn--sm post-msg-btn" data-post-id="${post.id}" data-author="${escapeHtml(post.author_username)}">
@@ -62,7 +68,6 @@ function postCard(post, { showActions = true, isOwn = false, onMessage, onDelete
         ${isOwn ? `
           <div class="post-owner-actions">
             <button class="btn btn--ghost btn--sm" data-action="reactivate" data-post-id="${post.id}">${t("post.reactivate")}</button>
-            <button class="btn btn--ghost btn--sm${boostedToday ? " btn--disabled" : ""}" data-action="boost" data-post-id="${post.id}" ${boostedToday ? "disabled" : ""}>${boostedToday ? t("post.boost.done") : t("post.boost")}</button>
             <button class="btn btn--danger btn--sm" data-action="delete" data-post-id="${post.id}">${t("post.delete")}</button>
           </div>
         ` : ""}

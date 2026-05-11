@@ -192,7 +192,8 @@ async function initSettings() {
   } else {
     proEl.innerHTML = `
       <p class="pro-desc">${t("settings.pro_desc")}</p>
-      <a href="https://stripe.com/checkout" class="btn btn--primary btn--full" target="_blank">${t("settings.go_pro")}</a>
+      <p class="pro-desc">${t("settings.pro_unavailable")}</p>
+      <button class="btn btn--ghost btn--full" disabled>${t("settings.pro_soon")}</button>
     `;
   }
 

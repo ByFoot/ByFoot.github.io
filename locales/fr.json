@@ -10,8 +10,6 @@
   "post.type.lend": "Prêt",
   "post.type.borrow": "Emprunt",
   "post.expires": "Expire",
-  "post.boost": "Booster",
-  "post.boost.done": "Boosté",
   "post.reactivate": "Réactiver",
   "post.delete": "Supprimer",
   "post.message": "Message",
@@ -23,7 +21,6 @@
   "post.expires_days": "jours",
   "post.expires_hours": "heures",
   "post.new": "Nouvelle annonce",
-  "post.boosted": "Boosté",
   "post.min_walk": "min à pied",
   "post.send_message": "Envoyer un message",
   "post.message_placeholder": "Votre message...",
@@ -45,7 +42,9 @@
   "settings.notif_new_chat": "Nouveaux messages",
   "settings.chat_expiry": "Expiration des chats",
   "settings.go_pro": "Passer Pro",
-  "settings.pro_desc": "Rayon étendu · Boost quotidien · Changement de pseudo",
+  "settings.pro_desc": "Rayon étendu · Annonces prioritaires · Changement de pseudo",
+  "settings.pro_unavailable": "L'abonnement n'est pas encore disponible.",
+  "settings.pro_soon": "Bientôt",
   "settings.location_update": "Localisation mise à jour",
   "settings.location_error": "Impossible d'obtenir la position",
   "settings.minutes": "min à pied",
@@ -54,6 +53,7 @@
   "location.required_body": "ByFoot a besoin de votre position pour afficher les annonces proches.",
   "location.enable": "Activer la localisation",
   "location.error": "Acces localisation impossible. Reessayez.",
+  "location.denied": "Localisation bloquee. Sur iPhone: menu aA Safari → Reglages du site → Localisation → Autoriser.",
 
   "action.save": "Enregistrer",
   "action.cancel": "Annuler",
@@ -78,6 +78,7 @@
   "profile.my_profile": "Mon profil",
 
   "filter.all": "Tous",
+  "feed.search_placeholder": "Rechercher une annonce",
 
   "time.just_now": "À l'instant",
   "time.minutes_ago": "il y a {n} min",

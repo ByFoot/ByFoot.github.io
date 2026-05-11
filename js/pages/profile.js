@@ -135,23 +135,15 @@ function renderProfilePosts(posts, isOwn) {
       }
     }
 
-    if (action === "boost") {
-      btn.disabled = true;
-      const res = await API.boostPost(postId);
-      if (res && res.status === 204) {
-        btn.textContent = t("post.boost.done");
-      } else if (res) {
-        const msg = await parseError(res);
-        showError(btn.closest(".post-card"), msg);
-        btn.disabled = false;
-      }
-    }
-
     if (action === "reactivate") {
-      const newExpiryDays = prompt("Nouveau delai d'expiration (jours):", "7");
-      if (!newExpiryDays) return;
+      const newExpiryDays = prompt("Nouveau delai (jours):", "1");
+      const newExpiryHours = prompt("Nouveau delai (heures):", "1");
+      const days = parseInt(newExpiryDays, 10);
+      const hours = parseInt(newExpiryHours, 10);
+      if (!Number.isInteger(days) || days < 1) return;
+      if (!Number.isInteger(hours) || hours < 1) return;
       btn.disabled = true;
-      const res = await API.patchPost(postId, { expires_in: `${newExpiryDays} 00:00:00` });
+      const res = await API.patchPost(postId, { expires_in: `${days} ${String(hours).padStart(2, "0")}:00:00` });
       if (res && res.ok) {
         const updated = await res.json();
         btn.closest(".post-card").replaceWith(

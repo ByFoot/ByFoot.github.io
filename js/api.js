@@ -102,8 +102,12 @@ const API = {
   },
 
   // ── Posts ──────────────────────────────────────────────────────────────────
-  async getPosts() {
-    return apiFetch("/posts/");
+  async getPosts({ type, q } = {}) {
+    const params = new URLSearchParams();
+    if (q) params.set("q", q);
+    if (type && type !== "all") params.set("type", type);
+    const query = params.toString();
+    return apiFetch(`/posts/${query ? `?${query}` : ""}`);
   },
 
   async uploadPostImage(file) {
@@ -134,10 +138,6 @@ const API = {
 
   async deletePost(id) {
     return apiFetch(`/posts/${id}/`, { method: "DELETE" });
-  },
-
-  async boostPost(id) {
-    return apiFetch(`/posts/${id}/boost/`, { method: "POST" });
   },
 
   // ── Chat ───────────────────────────────────────────────────────────────────

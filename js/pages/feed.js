@@ -2,12 +2,16 @@
 
 let feedPosts = [];
 let feedFilter = "all";
+let feedSearchTerm = "";
 
 function renderFeed() {
   return `
     <div class="page feed-page">
       <header class="page-header">
         <h2 class="page-title">${t("nav.feed")}</h2>
+        <div class="feed-search">
+          <input class="input feed-search-input" id="feed-search" placeholder="${t("feed.search_placeholder")}">
+        </div>
         <div class="feed-filters" id="feed-filters">
           <button class="filter-btn filter-btn--active" data-filter="all">${t("filter.all")}</button>
           <button class="filter-btn" data-filter="sell">${t("post.type.sell")}</button>
@@ -42,6 +46,11 @@ function renderFeed() {
 async function initFeed() {
   await loadFeed();
 
+  document.getElementById("feed-search")?.addEventListener("input", (e) => {
+    feedSearchTerm = e.target.value.trim();
+    loadFeed();
+  });
+
   // Filter buttons
   document.getElementById("feed-filters")?.addEventListener("click", (e) => {
     const btn = e.target.closest(".filter-btn");
@@ -49,7 +58,7 @@ async function initFeed() {
     feedFilter = btn.dataset.filter;
     document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("filter-btn--active"));
     btn.classList.add("filter-btn--active");
-    renderFeedList();
+    loadFeed();
   });
 
   // Message modal triggers (delegated)
@@ -66,7 +75,7 @@ async function initFeed() {
 }
 
 async function loadFeed() {
-  const res = await API.getPosts();
+  const res = await API.getPosts({ type: feedFilter, q: feedSearchTerm });
   if (!res || !res.ok) {
     document.getElementById("feed-list").innerHTML = `<p class="empty-state">${t("error.generic")}</p>`;
     return;
@@ -79,16 +88,14 @@ function renderFeedList() {
   const list = document.getElementById("feed-list");
   if (!list) return;
 
-  const filtered = feedFilter === "all" ? feedPosts : feedPosts.filter(p => p.type === feedFilter);
-
-  if (filtered.length === 0) {
+  if (feedPosts.length === 0) {
     list.innerHTML = `<p class="empty-state">Aucune annonce dans votre rayon.</p>`;
     return;
   }
 
   const isOwnFilter = (p) => p.author_username === window.APP.me?.username;
 
-  list.innerHTML = filtered.map(post =>
+  list.innerHTML = feedPosts.map(post =>
     postCard(post, {
       showActions: true,
       isOwn: isOwnFilter(post),

@@ -10,8 +10,6 @@
   "post.type.lend": "Lend",
   "post.type.borrow": "Borrow",
   "post.expires": "Expires",
-  "post.boost": "Boost",
-  "post.boost.done": "Boosted",
   "post.reactivate": "Reactivate",
   "post.delete": "Delete",
   "post.message": "Message",
@@ -23,7 +21,6 @@
   "post.expires_days": "days",
   "post.expires_hours": "hours",
   "post.new": "New listing",
-  "post.boosted": "Boosted",
   "post.min_walk": "min walk",
   "post.send_message": "Send a message",
   "post.message_placeholder": "Your message...",
@@ -45,7 +42,9 @@
   "settings.notif_new_chat": "New messages",
   "settings.chat_expiry": "Chat expiry",
   "settings.go_pro": "Go Pro",
-  "settings.pro_desc": "Extended radius · Daily boost · Username change",
+  "settings.pro_desc": "Extended radius · Priority listings · Username change",
+  "settings.pro_unavailable": "Upgrade is not available yet.",
+  "settings.pro_soon": "Coming soon",
   "settings.location_update": "Location updated",
   "settings.location_error": "Could not get location",
   "settings.minutes": "min walk",
@@ -54,6 +53,7 @@
   "location.required_body": "ByFoot needs your location to show nearby posts and chats.",
   "location.enable": "Enable location",
   "location.error": "Location access failed. Please try again.",
+  "location.denied": "Location is blocked. On iPhone: Safari aA menu → Website Settings → Location → Allow.",
 
   "action.save": "Save",
   "action.cancel": "Cancel",
@@ -78,6 +78,7 @@
   "profile.my_profile": "My profile",
 
   "filter.all": "All",
+  "feed.search_placeholder": "Search listings",
 
   "time.just_now": "Just now",
   "time.minutes_ago": "{n} min ago",

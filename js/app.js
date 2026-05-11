@@ -152,8 +152,13 @@ function requestLocationOnce() {
         document.getElementById("location-enable-btn")?.addEventListener("click", requestLocationOnce, { once: true });
       }
     },
-    () => {
-      if (errorEl) errorEl.textContent = t("location.error");
+    (err) => {
+      if (!errorEl) return;
+      if (err?.code === 1) {
+        errorEl.textContent = t("location.denied");
+      } else {
+        errorEl.textContent = t("location.error");
+      }
       document.getElementById("location-enable-btn")?.addEventListener("click", requestLocationOnce, { once: true });
     },
     { enableHighAccuracy: true, timeout: 10000 }

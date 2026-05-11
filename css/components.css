@@ -48,21 +48,6 @@
 .type--lend   { background: rgba(200,245,58,0.10);  color: var(--c-lend);   border-color: rgba(200,245,58,0.25); }
 .type--borrow { background: rgba(224,96,208,0.12);  color: var(--c-borrow); border-color: rgba(224,96,208,0.3); }
 
-.post-boosted {
-  font-size: 0.65rem;
-  font-family: var(--font-mono);
-  color: var(--c-orange);
-  background: rgba(245,166,35,0.1);
-  border: 1px solid rgba(245,166,35,0.25);
-  padding: 2px 7px;
-  border-radius: var(--r-full);
-  animation: pulse 2s ease-in-out infinite;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.6; }
-}
-
 .post-distance {
   margin-left: auto;
   font-size: 0.75rem;
@@ -203,6 +188,15 @@
 }
 .feed-page .page-title {
   padding: 0 var(--sp-4) var(--sp-2);
+}
+
+.feed-search {
+  padding: 0 var(--sp-4) var(--sp-2);
+  width: 100%;
+}
+
+.feed-search-input {
+  width: 100%;
 }
 
 /* ── Type selector (post form) ─────────────────────────────────────────────── */

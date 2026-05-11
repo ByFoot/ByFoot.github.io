@@ -42,26 +42,3 @@ function initLogin() {
   */
 }
 
-async function handleSocialLogin(apiFn) {
-  try {
-    const res = await apiFn();
-    if (!res.ok) {
-      const msg = await parseError(res);
-      showError(document.querySelector(".login-actions"), msg);
-      return;
-    }
-    const data = await res.json();
-    window.APP.jwt = data.access;
-    window.APP.refresh = data.refresh;
-    localStorage.setItem("jwt", data.access);
-    localStorage.setItem("refresh", data.refresh);
-
-    const meRes = await API.getMe();
-    if (meRes && meRes.ok) {
-      window.APP.me = await meRes.json();
-    }
-    location.hash = "#/feed";
-  } catch (e) {
-    showError(document.querySelector(".login-actions"), t("error.generic"));
-  }
-}

@@ -34,22 +34,6 @@ async function apiFetch(path, options = {}) {
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 const API = {
-  async loginGoogle(access_token) {
-    return fetch(API_BASE + "/auth/social/google/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ access_token }),
-    });
-  },
-
-  async loginApple(access_token, id_token) {
-    return fetch(API_BASE + "/auth/social/apple/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ access_token, id_token }),
-    });
-  },
-
   // ── User ───────────────────────────────────────────────────────────────────
   async getMe() {
     return apiFetch("/me/");

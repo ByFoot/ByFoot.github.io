@@ -171,8 +171,19 @@ const API = {
     return apiFetch(`/users/${id}/reputation/`);
   },
 
+  async getUserReputationByUsername(username) {
+    return apiFetch(`/users/by-username/${encodeURIComponent(username)}/reputation/`);
+  },
+
   async voteUser(id, kind) {
     return apiFetch(`/users/${id}/vote/`, {
+      method: "POST",
+      body: JSON.stringify({ kind }),
+    });
+  },
+
+  async voteUserByUsername(username, kind) {
+    return apiFetch(`/users/by-username/${encodeURIComponent(username)}/vote/`, {
       method: "POST",
       body: JSON.stringify({ kind }),
     });

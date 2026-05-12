@@ -13,6 +13,7 @@ const ROUTES = [
   { pattern: /^\/chat$/,            page: "chat-list"   },
   { pattern: /^\/chat\/(\d+)$/,     page: "chat-detail" },
   { pattern: /^\/profile$/,         page: "profile-self" },
+  { pattern: /^\/profile\/u\/([^/]+)$/, page: "profile-username" },
   { pattern: /^\/profile\/(\d+)$/,  page: "profile"     },
   { pattern: /^\/settings$/,        page: "settings"    },
 ];
@@ -63,8 +64,12 @@ const ROUTER = {
           break;
         }
         id = window.APP.me.id;
-        main.innerHTML = renderProfile(id);        initProfile(id);        break;
-      case "profile":     main.innerHTML = renderProfile(id);        initProfile(id);        break;
+        main.innerHTML = renderProfile(id);        initProfile({ id, isSelf: true });        break;
+      case "profile-username": {
+        const username = decodeURIComponent(id || "");
+        main.innerHTML = renderProfile(username);        initProfile({ username });        break;
+      }
+      case "profile":     main.innerHTML = renderProfile(id);        initProfile({ id });        break;
       case "settings":    main.innerHTML = renderSettings();         initSettings();         break;
     }
 

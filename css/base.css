@@ -275,6 +275,7 @@ img { max-width: 100%; display: block; }
   padding: var(--sp-6);
   width: 100%;
   max-width: 600px;
+  margin-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom));
   animation: slideUp 0.25s ease;
 }
 @keyframes slideUp {

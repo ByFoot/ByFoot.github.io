@@ -65,7 +65,10 @@
 
 .post-image {
   width: 100%;
+  aspect-ratio: 4 / 3;
   height: auto;
+  max-height: 240px;
+  object-fit: cover;
   border-radius: var(--r-md);
   border: 1px solid var(--c-border);
 }
@@ -110,7 +113,7 @@
 .install-tip {
   position: fixed;
   left: 50%;
-  bottom: calc(var(--nav-h) + var(--sp-3));
+  bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + var(--sp-3));
   transform: translateX(-50%);
   width: min(520px, 94vw);
   background: var(--c-surface);
@@ -267,6 +270,7 @@
   border-bottom: 1px solid var(--c-border);
   transition: background 0.12s;
   animation: fadeIn 0.2s ease;
+  cursor: pointer;
 }
 .chat-item:hover { background: var(--c-surface); }
 
@@ -302,6 +306,20 @@
   font-size: 0.9rem;
   font-weight: 600;
   font-family: var(--font-mono);
+}
+
+.chat-profile-link {
+  color: inherit;
+  text-decoration: none;
+}
+.chat-profile-link:hover {
+  color: var(--c-text);
+}
+
+.chat-user-actions {
+  display: flex;
+  gap: var(--sp-2);
+  margin-left: auto;
 }
 
 .chat-item__time {

@@ -23,14 +23,14 @@ function renderProfile(id) {
   `;
 }
 
-async function initProfile(id) {
+async function initProfile({ id, username, isSelf } = {}) {
   const me = window.APP.me;
-  const isMe = String(id) === String(me?.id);
+  const isMe = isSelf || (id && String(id) === String(me?.id)) || (username && username === me?.username);
 
   if (isMe) {
     await loadMyProfile();
   } else {
-    await loadOtherProfile(id);
+    await loadOtherProfile({ id, username });
   }
 }
 
@@ -60,15 +60,19 @@ async function loadMyProfile() {
   }
 }
 
-async function loadOtherProfile(id) {
-  const res = await API.getUserReputation(id);
+async function loadOtherProfile({ id, username }) {
+  const res = username
+    ? await API.getUserReputationByUsername(username)
+    : await API.getUserReputation(id);
   if (!res || !res.ok) {
     document.getElementById("profile-card").innerHTML = `<p class="empty-state">${t("error.generic")}</p>`;
     return;
   }
   const rep = await res.json();
 
-  document.getElementById("profile-username").textContent = `@user_${id}`;
+  const displayUsername = username || `user_${id}`;
+
+  document.getElementById("profile-username").textContent = `@${displayUsername}`;
   document.getElementById("profile-rep-badge").innerHTML = reputationBadge(rep.score);
 
   document.getElementById("profile-card").innerHTML = `
@@ -80,10 +84,10 @@ async function loadOtherProfile(id) {
 
   document.getElementById("profile-vote-actions").style.display = "flex";
   document.getElementById("profile-vote-actions").innerHTML = `
-    <button class="btn btn--ghost vote-btn" data-kind="like" data-user-id="${id}">
+    <button class="btn btn--ghost vote-btn" data-kind="like" data-user-id="${id || ""}" data-username="${escapeHtml(displayUsername)}">
       👍 ${t("profile.vote_like")}
     </button>
-    <button class="btn btn--ghost vote-btn" data-kind="dislike" data-user-id="${id}">
+    <button class="btn btn--ghost vote-btn" data-kind="dislike" data-user-id="${id || ""}" data-username="${escapeHtml(displayUsername)}">
       👎 ${t("profile.vote_dislike")}
     </button>
   `;
@@ -93,9 +97,12 @@ async function loadOtherProfile(id) {
     if (!btn) return;
     const kind = btn.dataset.kind;
     const userId = btn.dataset.userId;
+    const userName = btn.dataset.username;
 
     btn.disabled = true;
-    const res = await API.voteUser(userId, kind);
+    const res = userName
+      ? await API.voteUserByUsername(userName, kind)
+      : await API.voteUser(userId, kind);
     if (res && res.ok) {
       const data = await res.json();
       document.getElementById("profile-rep-badge").innerHTML = reputationBadge(data.score);

@@ -30,17 +30,25 @@ async function initChatList() {
   }
 
   list.innerHTML = convs.map(conv => {
+    const encodedUser = encodeURIComponent(conv.other_username);
     return `
-      <a href="#/chat/${conv.id}" class="chat-item">
+      <div class="chat-item" data-chat-id="${conv.id}">
         <div class="chat-item__avatar">@</div>
         <div class="chat-item__body">
           <div class="chat-item__header">
-            <span class="chat-item__name">@${escapeHtml(conv.other_username)}</span>
+            <a class="chat-item__name chat-profile-link" href="#/profile/u/${encodedUser}">@${escapeHtml(conv.other_username)}</a>
             <span class="chat-item__time">${formatRelative(conv.last_message_at)}</span>
           </div>
           <p class="chat-item__preview">${escapeHtml(conv.last_message ?? "")}</p>
         </div>
-      </a>
+      </div>
     `;
   }).join("");
+
+  list.addEventListener("click", (e) => {
+    if (e.target.closest(".chat-profile-link")) return;
+    const item = e.target.closest(".chat-item");
+    if (!item) return;
+    location.hash = `#/chat/${item.dataset.chatId}`;
+  });
 }

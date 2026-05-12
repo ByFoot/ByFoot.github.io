@@ -10,7 +10,11 @@ function renderChatDetail(id) {
     <div class="page chat-detail-page">
       <header class="page-header chat-detail-header">
         <button class="btn-back" onclick="stopChatPoll(); history.back()">←</button>
-        <h2 class="page-title" id="chat-other-user">…</h2>
+        <h2 class="page-title"><a id="chat-other-user" class="chat-profile-link" href="#">…</a></h2>
+        <div class="chat-user-actions" id="chat-user-actions" style="display:none">
+          <button class="btn btn--ghost btn--sm vote-btn" data-kind="like">👍</button>
+          <button class="btn btn--ghost btn--sm vote-btn" data-kind="dislike">👎</button>
+        </div>
       </header>
 
       <div id="chat-messages" class="chat-messages">
@@ -34,7 +38,15 @@ async function initChatDetail(id) {
     const convs = await convRes.json();
     currentChatConv = convs.find(c => c.id == id);
     if (currentChatConv) {
-      document.getElementById("chat-other-user").textContent = `@${currentChatConv.other_username}`;
+      const username = currentChatConv.other_username;
+      const profileLink = document.getElementById("chat-other-user");
+      profileLink.textContent = `@${username}`;
+      profileLink.href = `#/profile/u/${encodeURIComponent(username)}`;
+
+      const actions = document.getElementById("chat-user-actions");
+      actions.style.display = "flex";
+      actions.dataset.username = username;
+    }
     }
   }
 
@@ -46,6 +58,20 @@ async function initChatDetail(id) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendChatMessage();
+    }
+  });
+
+  document.getElementById("chat-user-actions")?.addEventListener("click", async (e) => {
+    const btn = e.target.closest(".vote-btn");
+    if (!btn) return;
+    const username = e.currentTarget.dataset.username;
+    if (!username) return;
+    btn.disabled = true;
+    const res = await API.voteUserByUsername(username, btn.dataset.kind);
+    if (res && res.ok) {
+      e.currentTarget.querySelectorAll(".vote-btn").forEach(b => b.disabled = true);
+    } else {
+      btn.disabled = false;
     }
   });
 

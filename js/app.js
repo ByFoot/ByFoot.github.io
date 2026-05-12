@@ -78,6 +78,8 @@ const ROUTER = {
   }
 };
 
+window.ROUTER = ROUTER;
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function showError(containerEl, msg) {
   if (!containerEl) return;

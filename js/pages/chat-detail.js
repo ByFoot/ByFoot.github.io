@@ -47,7 +47,6 @@ async function initChatDetail(id) {
       actions.style.display = "flex";
       actions.dataset.username = username;
     }
-    }
   }
 
   await loadMessages(id);

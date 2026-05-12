@@ -36,7 +36,7 @@ async function initChatList() {
         <div class="chat-item__avatar">@</div>
         <div class="chat-item__body">
           <div class="chat-item__header">
-            <a class="chat-item__name chat-profile-link" href="#/profile/u/${encodedUser}">@${escapeHtml(conv.other_username)}</a>
+            <button type="button" class="chat-item__name chat-profile-link" data-username="${encodedUser}">@${escapeHtml(conv.other_username)}</button>
             <span class="chat-item__time">${formatRelative(conv.last_message_at)}</span>
           </div>
           <p class="chat-item__preview">${escapeHtml(conv.last_message ?? "")}</p>
@@ -46,9 +46,18 @@ async function initChatList() {
   }).join("");
 
   list.addEventListener("click", (e) => {
-    if (e.target.closest(".chat-profile-link")) return;
+    const profileBtn = e.target.closest(".chat-profile-link");
+    if (profileBtn) {
+      const username = profileBtn.dataset.username;
+      if (username) location.hash = `#/profile/u/${username}`;
+      return;
+    }
     const item = e.target.closest(".chat-item");
     if (!item) return;
-    location.hash = `#/chat/${item.dataset.chatId}`;
+    const nextHash = `#/chat/${item.dataset.chatId}`;
+    location.hash = nextHash;
+    if (window.ROUTER) {
+      window.ROUTER.navigate(nextHash.slice(1));
+    }
   });
 }

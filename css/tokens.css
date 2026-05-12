@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ff-body: 'Inter', system-ui, sans-serif;
+  --ff-mono: 'JetBrains Mono', monospace;
+
+  --c-bg:       #ffffff;
+  --c-surface:  #f7f6f3;
+  --c-surface2: #eeece8;
+  --c-border:   rgba(0,0,0,0.10);
+  --c-border2:  rgba(0,0,0,0.18);
+  --c-text:     #1a1916;
+  --c-muted:    #6b6860;
+  --c-dim:      #a09e99;
+
+  --c-accent:   #e8820c;
+  --c-accent-d: #c46b07;
+  --c-accent-s: rgba(232,130,12,0.10);
+
+  --c-sell:   #d97706;
+  --c-buy:    #2563eb;
+  --c-lend:   #16a34a;
+  --c-borrow: #9333ea;
+  --c-red:    #dc2626;
+  --c-green:  #16a34a;
+
+  --r-sm: 6px; --r-md: 10px; --r-lg: 14px; --r-xl: 20px; --r-pill: 999px;
+
+  --nav-h:    60px;
+  --header-h: 52px;
+  --safe-b:   env(safe-area-inset-bottom, 0px);
+  --safe-t:   env(safe-area-inset-top, 0px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --c-bg:       #111110;
+    --c-surface:  #1c1b19;
+    --c-surface2: #242320;
+    --c-border:   rgba(255,255,255,0.08);
+    --c-border2:  rgba(255,255,255,0.16);
+    --c-text:     #f0ede8;
+    --c-muted:    #8a8880;
+    --c-dim:      #514f4a;
+    --c-accent:   #f59c38;
+    --c-accent-d: #e8820c;
+    --c-accent-s: rgba(245,156,56,0.12);
+    --c-sell:   #fb923c;
+    --c-buy:    #60a5fa;
+    --c-lend:   #4ade80;
+    --c-borrow: #c084fc;
+    --c-red:    #f87171;
+    --c-green:  #4ade80;
+  }
+}
+
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--ff-body);
+  background: var(--c-bg);
+  color: var(--c-text);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,h2,h3,h4 { line-height: 1.2; font-weight: 600; }
+a { color: inherit; text-decoration: none; }
+button { font-family: var(--ff-body); cursor: pointer; border: none; background: none; }
+input, textarea, select { font-family: var(--ff-body); font-size: 1rem; }
+img { max-width: 100%; display: block; }

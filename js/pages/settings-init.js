@@ -69,11 +69,17 @@ async function initSettings() {
   const proEl = document.getElementById("pro-status");
   proEl.innerHTML = me.is_pro
     ? `<span class="pro-badge">${t("profile.pro_badge")}</span>`
-    : `<p class="pro-desc">${t("settings.pro_desc")}</p>
-       <stripe-buy-button
-         buy-button-id="buy_btn_1TWEySGTv1SoWf9cNt7zuEbz"
-         publishable-key="pk_live_51SnY0EGTv1SoWf9cTiBdEXYvE8XHGuzbAdXgx2R4vfdo6vYMOryV2IJVqpOWmGkePkX70oVLIGxUl7RaGVqFO8s900K6OsUHSU"
-       ></stripe-buy-button>`;
+    : `<ul class="pro-perks">
+         <li>📍 ${t("settings.pro_perk_radius")}</li>
+         <li>⭐ ${t("settings.pro_perk_priority")}</li>
+         <li>✏️ ${t("settings.pro_perk_username")}</li>
+       </ul>
+       <div class="pro-buy-wrap">
+         <stripe-buy-button
+           buy-button-id="buy_btn_1TWEySGTv1SoWf9cNt7zuEbz"
+           publishable-key="pk_live_51SnY0EGTv1SoWf9cTiBdEXYvE8XHGuzbAdXgx2R4vfdo6vYMOryV2IJVqpOWmGkePkX70oVLIGxUl7RaGVqFO8s900K6OsUHSU"
+         ></stripe-buy-button>
+       </div>`;
 
   document.querySelectorAll("[data-lang]").forEach(btn => {
     btn.addEventListener("click", async () => {

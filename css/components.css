@@ -99,6 +99,12 @@ body:has(.chat-detail-page) .global-theme-btn { display: none; }
 .settings-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
 .settings-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-l); padding: 16px; display: flex; flex-direction: column; gap: 14px; }
 .settings-section--pro { border-color: rgba(232,130,12,.35); background: rgba(232,130,12,.05); }
+
+.pro-perks { list-style: none; margin: 0 0 16px; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.pro-perks li { font-size: 0.9rem; color: var(--text); display: flex; align-items: center; gap: 8px; }
+
+.pro-buy-wrap { display: flex; justify-content: center; }
+
 .settings-section-title { font-size: 0.68rem; font-family: var(--fm); text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); }
 .settings-row { display: flex; flex-direction: column; gap: 7px; }
 .settings-toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }

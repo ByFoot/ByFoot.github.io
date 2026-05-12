@@ -1,4 +1,4 @@
-// pages/settings.js — render only
+// pages/settings.js - render only
 
 function renderSettings() {
   return `
@@ -21,7 +21,7 @@ function renderSettings() {
         <section class="settings-section">
           <h3 class="settings-section-title">${t("settings.location")}</h3>
           <div class="settings-row">
-            <label class="form-label">${t("settings.radius")} — <span id="radius-value">…</span> ${t("settings.minutes")}</label>
+            <label class="form-label">${t("settings.radius")}: <span id="radius-value">…</span> ${t("settings.minutes")}</label>
             <input type="range" id="radius-slider" class="slider" min="0" max="5" step="1" value="3">
             <div id="settings-radius-error" class="error-msg"></div>
           </div>

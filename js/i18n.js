@@ -1,4 +1,4 @@
-// i18n.js — Language loading and t() function
+// i18n.js - Language loading and t() function
 
 const I18N = {
   strings: {},

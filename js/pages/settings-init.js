@@ -1,4 +1,4 @@
-// pages/settings-init.js — init/event logic
+// pages/settings-init.js - init/event logic
 
 async function initSettings() {
   const me = window.APP.me;
@@ -70,9 +70,9 @@ async function initSettings() {
   proEl.innerHTML = me.is_pro
     ? `<span class="pro-badge">${t("profile.pro_badge")}</span>`
     : `<ul class="pro-perks">
-         <li>📍 ${t("settings.pro_perk_radius")}</li>
+         <li> ${t("settings.pro_perk_radius")}</li>
          <li>⭐ ${t("settings.pro_perk_priority")}</li>
-         <li>✏️ ${t("settings.pro_perk_username")}</li>
+         <li> ${t("settings.pro_perk_username")}</li>
        </ul>
        <div class="pro-buy-wrap">
          <stripe-buy-button

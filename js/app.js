@@ -1,4 +1,4 @@
-// app.js — SPA router + global state
+// app.js - SPA router + global state
 
 window.APP = {
   jwt:     localStorage.getItem("jwt"),
@@ -267,7 +267,7 @@ async function boot() {
         return;
       }
     } catch {
-      // API unreachable — still allow boot for dev
+      // API unreachable - still allow boot for dev
     }
   }
 

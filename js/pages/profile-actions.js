@@ -1,11 +1,11 @@
-// pages/profile-actions.js — vote + post management
+// pages/profile-actions.js - vote + post management
 
 function initProfileVoteActions(id, displayUsername) {
   const voteEl = document.getElementById("profile-vote-actions");
   voteEl.style.display = "flex";
   voteEl.innerHTML = `
-    <button class="btn btn--ghost vote-btn" data-kind="like" data-user-id="${id || ""}" data-username="${escapeHtml(displayUsername)}">👍 ${t("profile.vote_like")}</button>
-    <button class="btn btn--ghost vote-btn" data-kind="dislike" data-user-id="${id || ""}" data-username="${escapeHtml(displayUsername)}">👎 ${t("profile.vote_dislike")}</button>
+    <button class="btn btn--ghost vote-btn" data-kind="like" data-user-id="${id || ""}" data-username="${escapeHtml(displayUsername)}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M5 7V13M3 13h7.5a1 1 0 0 0 .97-.757l1-4A1 1 0 0 0 11.5 7H8V4a1.5 1.5 0 0 0-3 0v3z"/></svg> ${t("profile.vote_like")}</button>
+    <button class="btn btn--ghost vote-btn" data-kind="dislike" data-user-id="${id || ""}" data-username="${escapeHtml(displayUsername)}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M11 9V3M13 3H5.5a1 1 0 0 0-.97.757l-1 4A1 1 0 0 0 4.5 9H8v3a1.5 1.5 0 0 0 3 0V9z"/></svg> ${t("profile.vote_dislike")}</button>
   `;
   voteEl.addEventListener("click", async (e) => {
     const btn = e.target.closest(".vote-btn");

@@ -1,4 +1,4 @@
-// pages/profile.js — render + load helpers
+// pages/profile.js - render + load helpers
 
 function renderProfile(id) {
   return `
@@ -77,11 +77,11 @@ async function loadOtherProfile({ id, username }) {
     <div class="profile-rep-tabs">
       <div class="rep-tab rep-tab--pos">
         <span class="rep-tab__count">+${positives}</span>
-        <span class="rep-tab__label">👍</span>
+        <span class="rep-tab__label"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><polyline points="2,7 5.5,10.5 12,4"/></svg></span>
       </div>
       <div class="rep-tab rep-tab--neg">
         <span class="rep-tab__count">−${negatives}</span>
-        <span class="rep-tab__label">👎</span>
+        <span class="rep-tab__label"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><line x1="3" y1="3" x2="11" y2="11"/><line x1="11" y1="3" x2="3" y2="11"/></svg></span>
       </div>
     </div>
   `;

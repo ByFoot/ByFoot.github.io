@@ -1,4 +1,4 @@
-// api.js — All API calls, JWT injection, token refresh
+// api.js - All API calls, JWT injection, token refresh
 
 const API_BASE = "https://byfoot.up.railway.app"; // backend URL
 

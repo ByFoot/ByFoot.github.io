@@ -70,8 +70,10 @@ async function initSettings() {
   proEl.innerHTML = me.is_pro
     ? `<span class="pro-badge">${t("profile.pro_badge")}</span>`
     : `<p class="pro-desc">${t("settings.pro_desc")}</p>
-       <p class="pro-desc">${t("settings.pro_unavailable")}</p>
-       <button class="btn btn--ghost btn--full" disabled>${t("settings.pro_soon")}</button>`;
+       <stripe-buy-button
+         buy-button-id="buy_btn_1TWEySGTv1SoWf9cNt7zuEbz"
+         publishable-key="pk_live_51SnY0EGTv1SoWf9cTiBdEXYvE8XHGuzbAdXgx2R4vfdo6vYMOryV2IJVqpOWmGkePkX70oVLIGxUl7RaGVqFO8s900K6OsUHSU"
+       ></stripe-buy-button>`;
 
   document.querySelectorAll("[data-lang]").forEach(btn => {
     btn.addEventListener("click", async () => {

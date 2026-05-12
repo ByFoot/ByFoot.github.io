@@ -32,7 +32,7 @@ initMessaging().then((messaging) => {
     const title = payload?.notification?.title || "ByFoot";
     const options = {
       body: payload?.notification?.body || "",
-      icon: "/assets/favicon.svg",
+      icon: "/assets/favicon.png",
     };
     self.registration.showNotification(title, options);
   });

@@ -4,7 +4,6 @@
   "nav.profile": "Profil",
   "nav.settings": "Réglages",
   "nav.new_post": "Publier",
-
   "post.type.sell": "Vente",
   "post.type.buy": "Achat",
   "post.type.lend": "Prêt",
@@ -24,14 +23,11 @@
   "post.min_walk": "min à pied",
   "post.send_message": "Envoyer un message",
   "post.message_placeholder": "Votre message...",
-
   "chat.send": "Envoyer",
   "chat.placeholder": "Votre message...",
   "chat.new_message": "Nouveau message",
-
   "reputation.like": "J'apprécie",
   "reputation.dislike": "Je n'apprécie pas",
-
   "settings.radius": "Rayon de marche",
   "settings.location": "Mettre à jour ma position",
   "settings.notifications": "Notifications",
@@ -48,44 +44,37 @@
   "settings.location_update": "Localisation mise à jour",
   "settings.location_error": "Impossible d'obtenir la position",
   "settings.minutes": "min à pied",
-
   "location.required_title": "Localisation requise",
   "location.required_body": "ByFoot a besoin de votre position pour afficher les annonces proches.",
   "location.enable": "Activer la localisation",
   "location.error": "Acces localisation impossible. Reessayez.",
   "location.denied": "Localisation bloquee. Sur iPhone: menu aA Safari → Reglages du site → Localisation → Autoriser.",
-
   "install.tip_title": "Installer ByFoot",
   "install.tip_body": "Touchez Partager → Sur l'ecran d'accueil dans Safari.",
   "install.tip_dismiss": "Fermer",
-
   "action.save": "Enregistrer",
   "action.cancel": "Annuler",
   "action.message": "Message",
   "action.send": "Envoyer",
   "action.delete": "Supprimer",
   "action.reply": "Répondre",
-
   "error.generic": "Une erreur est survenue",
   "error.position_required": "Position GPS requise",
-
   "login.title": "ByFoot",
   "login.subtitle": "Le marché de votre quartier",
   "login.google": "Continuer avec Google",
   "login.apple": "Continuer avec Apple",
-
   "profile.posts": "Annonces",
   "profile.reputation": "Réputation",
   "profile.pro_badge": "Pro",
   "profile.vote_like": "Apprécier",
   "profile.vote_dislike": "Signaler",
   "profile.my_profile": "Mon profil",
-
   "filter.all": "Tous",
   "feed.search_placeholder": "Rechercher une annonce",
-
   "time.just_now": "À l'instant",
   "time.minutes_ago": "il y a {n} min",
   "time.hours_ago": "il y a {n}h",
-  "time.days_ago": "il y a {n}j"
+  "time.days_ago": "il y a {n}j",
+  "action.logout": "Déconnexion"
 }

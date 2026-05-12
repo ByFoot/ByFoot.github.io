@@ -52,6 +52,9 @@ const ROUTER = {
     }
 
     // Render page
+    const isChat = match.page === "chat-detail";
+    main.style.overflow = isChat ? "hidden" : "";
+    main.style.paddingBottom = isChat ? "0" : "";
     switch (match.page) {
       case "login":       main.innerHTML = renderLogin();            initLogin();            break;
       case "feed":        main.innerHTML = renderFeed();             initFeed();             break;

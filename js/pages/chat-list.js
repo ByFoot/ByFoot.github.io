@@ -25,6 +25,7 @@ async function initChatList() {
       <div class="chat-item__body">
         <div class="chat-item__header">
           <button type="button" class="chat-item__name chat-profile-link" data-username="${encodeURIComponent(conv.other_username)}">@${escapeHtml(conv.other_username)}</button>
+          ${conv.other_reputation != null ? reputationBadge(conv.other_reputation) : ""}
           <span class="chat-item__time">${formatRelative(conv.last_message_at)}</span>
         </div>
         <p class="chat-item__preview">${escapeHtml(conv.last_message ?? "")}</p>

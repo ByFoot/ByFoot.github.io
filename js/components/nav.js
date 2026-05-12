@@ -19,39 +19,11 @@ function renderNav() {
     const active = hash.startsWith(item.href) && item.href !== "#/new-post";
     return `
       <a href="${item.href}" class="nav-item${active ? " nav-item--active" : ""}${item.accent ? " nav-item--accent" : ""}">
-        ${item.accent ? `<span class="nav-icon-wrap">${navIcon(item.icon)}</span>` : navIcon(item.icon)}
+        ${navIcon(item.icon)}
         <span class="nav-label">${t(item.key)}</span>
       </a>
     `;
   }).join("");
-
-  // Theme toggle in header (all pages)
-  const existingToggle = document.getElementById("global-theme-toggle");
-  if (!existingToggle) {
-    const btn = document.createElement("button");
-    btn.id = "global-theme-toggle";
-    btn.className = "btn btn--icon btn--ghost global-theme-btn";
-    btn.setAttribute("aria-label", "Toggle theme");
-    btn.addEventListener("click", toggleTheme);
-    document.getElementById("app").prepend(btn);
-  }
-  updateThemeToggleIcon();
-}
-
-function toggleTheme() {
-  const next = (document.documentElement.dataset.theme || "dark") === "dark" ? "light" : "dark";
-  document.documentElement.dataset.theme = next;
-  localStorage.setItem("theme", next);
-  updateThemeToggleIcon();
-}
-
-function updateThemeToggleIcon() {
-  const btn = document.getElementById("global-theme-toggle");
-  if (!btn) return;
-  const isDark = (document.documentElement.dataset.theme || "dark") === "dark";
-  btn.innerHTML = isDark
-    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`
-    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
 }
 
 function navIcon(name) {

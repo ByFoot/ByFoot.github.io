@@ -50,31 +50,9 @@ async function initFeed() {
     btn.classList.add("filter-btn--active");
     loadFeed();
   });
-  document.getElementById("feed-list")?.addEventListener("click", async (e) => {
+  document.getElementById("feed-list")?.addEventListener("click", (e) => {
     const msgBtn = e.target.closest(".post-msg-btn");
-    if (msgBtn) { openMessageModal(msgBtn.dataset.postId, msgBtn.dataset.author); return; }
-    const actionBtn = e.target.closest("[data-action]");
-    if (!actionBtn) return;
-    const { action, postId } = actionBtn.dataset;
-    if (action === "delete") {
-      if (!confirm(t("post.delete") + "?")) return;
-      actionBtn.disabled = true;
-      const res = await API.deletePost(postId);
-      if (res && res.status === 204) actionBtn.closest(".post-card").remove();
-      else actionBtn.disabled = false;
-    }
-    if (action === "reactivate") {
-      const days = parseInt(prompt("Nouveau délai (jours):", "1"), 10);
-      const hours = parseInt(prompt("Nouveau délai (heures):", "1"), 10);
-      if (!Number.isInteger(days) || days < 1 || !Number.isInteger(hours) || hours < 1) return;
-      actionBtn.disabled = true;
-      const res = await API.patchPost(postId, { expires_in: `${days} ${String(hours).padStart(2,"0")}:00:00` });
-      if (res && res.ok) {
-        const updated = await res.json();
-        const d = document.createElement("div"); d.innerHTML = postCard(updated, { isOwn: true });
-        actionBtn.closest(".post-card").replaceWith(d.firstElementChild);
-      } else actionBtn.disabled = false;
-    }
+    if (msgBtn) openMessageModal(msgBtn.dataset.postId, msgBtn.dataset.author);
   });
   document.getElementById("msg-cancel")?.addEventListener("click", closeMessageModal);
   document.getElementById("msg-backdrop")?.addEventListener("click", closeMessageModal);

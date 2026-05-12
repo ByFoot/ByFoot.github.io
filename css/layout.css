@@ -2,8 +2,6 @@
 
 #app { display: flex; flex-direction: column; min-height: 100dvh; max-width: 600px; margin: 0 auto; padding-top: var(--safe-t); }
 #app-main { flex: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: calc(var(--nav-h) + var(--safe-b) + 16px); }
-/* Chat page: no extra bottom padding, composer is sticky */
-#app-main:has(.chat-detail-page) { padding-bottom: 0; overflow: hidden; display: flex; flex-direction: column; }
 
 .page { min-height: 100%; animation: fadeIn 0.15s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }

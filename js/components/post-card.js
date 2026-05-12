@@ -45,7 +45,7 @@ function postCard(post, { showActions = true, isOwn = false, onMessage, onDelete
     <article class="post-card" data-post-id="${post.id}">
       <header class="post-card__header">
         <span class="post-type ${typeClass}">${t("post.type." + post.type)}</span>
-        <span class="post-distance">${post.distance_minutes != null ? `${Math.round(post.distance_minutes)} ${t("post.min_walk")}` : ""}</span>
+        <span class="post-distance">${post.distance_minutes != null ? `${post.distance_minutes} ${t("post.min_walk")}` : ""}</span>
         ${reputationBadge(post.reputation_score)}
       </header>
 

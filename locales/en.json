@@ -4,7 +4,6 @@
   "nav.profile": "Profile",
   "nav.settings": "Settings",
   "nav.new_post": "Post",
-
   "post.type.sell": "Sell",
   "post.type.buy": "Buy",
   "post.type.lend": "Lend",
@@ -24,14 +23,11 @@
   "post.min_walk": "min walk",
   "post.send_message": "Send a message",
   "post.message_placeholder": "Your message...",
-
   "chat.send": "Send",
   "chat.placeholder": "Your message...",
   "chat.new_message": "New message",
-
   "reputation.like": "Appreciate",
   "reputation.dislike": "Downvote",
-
   "settings.radius": "Walking radius",
   "settings.location": "Update my location",
   "settings.notifications": "Notifications",
@@ -48,44 +44,37 @@
   "settings.location_update": "Location updated",
   "settings.location_error": "Could not get location",
   "settings.minutes": "min walk",
-
   "location.required_title": "Location required",
   "location.required_body": "ByFoot needs your location to show nearby posts and chats.",
   "location.enable": "Enable location",
   "location.error": "Location access failed. Please try again.",
   "location.denied": "Location is blocked. On iPhone: Safari aA menu → Website Settings → Location → Allow.",
-
   "install.tip_title": "Install ByFoot",
   "install.tip_body": "Tap Share → Add to Home Screen in Safari.",
   "install.tip_dismiss": "Dismiss",
-
   "action.save": "Save",
   "action.cancel": "Cancel",
   "action.message": "Message",
   "action.send": "Send",
   "action.delete": "Delete",
   "action.reply": "Reply",
-
   "error.generic": "An error occurred",
   "error.position_required": "GPS position required",
-
   "login.title": "ByFoot",
   "login.subtitle": "Your neighbourhood marketplace",
   "login.google": "Continue with Google",
   "login.apple": "Continue with Apple",
-
   "profile.posts": "Listings",
   "profile.reputation": "Reputation",
   "profile.pro_badge": "Pro",
   "profile.vote_like": "Appreciate",
   "profile.vote_dislike": "Flag",
   "profile.my_profile": "My profile",
-
   "filter.all": "All",
   "feed.search_placeholder": "Search listings",
-
   "time.just_now": "Just now",
   "time.minutes_ago": "{n} min ago",
   "time.hours_ago": "{n}h ago",
-  "time.days_ago": "{n}d ago"
+  "time.days_ago": "{n}d ago",
+  "action.logout": "Sign out"
 }

@@ -44,6 +44,8 @@
   color: var(--muted); display: flex; align-items: center; justify-content: center;
 }
 .global-theme-btn:hover { background: var(--surface); color: var(--text); }
+/* On chat detail, vote buttons occupy top-right; push theme toggle left of them */
+body:has(.chat-detail-page) .global-theme-btn { display: none; }
 
 /* Chat list with rep */
 

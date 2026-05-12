@@ -60,6 +60,7 @@
   "action.reply": "Reply",
   "error.generic": "An error occurred",
   "error.position_required": "GPS position required",
+  "error.user_not_found": "This user doesn't exist or may have changed their username.",
   "login.title": "ByFoot",
   "login.subtitle": "Your neighbourhood marketplace",
   "login.google": "Continue with Google",

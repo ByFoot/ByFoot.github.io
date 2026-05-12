@@ -52,7 +52,15 @@ async function loadMyProfile() {
 async function loadOtherProfile({ id, username }) {
   const res = username ? await API.getUserReputationByUsername(username) : await API.getUserReputation(id);
   if (!res || !res.ok) {
-    document.getElementById("profile-card").innerHTML = `<p class="empty-state">${t("error.generic")}</p>`;
+    const isNotFound = res && res.status === 404;
+    document.getElementById("profile-card").innerHTML = `<p class="empty-state">${
+      isNotFound
+        ? t("error.user_not_found")
+        : t("error.generic")
+    }</p>`;
+    if (isNotFound && username) {
+      document.getElementById("profile-username").textContent = `@${username}`;
+    }
     return;
   }
   const rep = await res.json();

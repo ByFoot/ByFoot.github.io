@@ -7,7 +7,6 @@ function renderPostForm() {
         <button class="btn-back" onclick="history.back()">←</button>
         <h2 class="page-title">${t("post.new")}</h2>
       </header>
-
       <form class="form" id="post-form" onsubmit="return false">
         <div class="form-group">
           <label class="form-label">${t("post.type")}</label>
@@ -20,17 +19,14 @@ function renderPostForm() {
           </div>
           <input type="hidden" id="post-type" value="sell">
         </div>
-
         <div class="form-group">
           <label class="form-label" for="post-title">${t("post.title")}</label>
           <input class="input" type="text" id="post-title" placeholder="${t("post.title")}" required>
         </div>
-
         <div class="form-group">
           <label class="form-label" for="post-price">${t("post.price")}</label>
           <input class="input" type="text" id="post-price" placeholder="ex: 50€, gratuit, à discuter">
         </div>
-
         <div class="form-group">
           <label class="form-label">${t("post.expires_in")}</label>
           <div class="settings-inline">
@@ -40,24 +36,18 @@ function renderPostForm() {
             <span class="form-label">${t("post.expires_hours")}</span>
           </div>
         </div>
-
         <div class="form-group">
           <label class="form-label" for="post-image">${t("post.image")}</label>
           <input class="input" type="file" id="post-image" accept="image/*">
         </div>
-
         <div id="post-error" class="error-msg"></div>
-
-        <button class="btn btn--primary btn--full" id="post-submit" type="submit">
-          ${t("action.save")}
-        </button>
+        <button class="btn btn--primary btn--full" id="post-submit" type="submit">${t("action.save")}</button>
       </form>
     </div>
   `;
 }
 
 function initPostForm() {
-  // Type selector
   document.getElementById("type-selector")?.addEventListener("click", (e) => {
     const btn = e.target.closest(".type-btn");
     if (!btn) return;
@@ -65,7 +55,6 @@ function initPostForm() {
     btn.classList.add("type-btn--active");
     document.getElementById("post-type").value = btn.dataset.type;
   });
-
   document.getElementById("post-form")?.addEventListener("submit", submitPost);
   document.getElementById("post-submit")?.addEventListener("click", submitPost);
 }
@@ -77,54 +66,27 @@ async function submitPost() {
   const expiresDays = parseInt(document.getElementById("post-expires-days").value, 10);
   const expiresHours = parseInt(document.getElementById("post-expires-hours").value, 10);
   const imageFile = document.getElementById("post-image").files[0] || null;
-
   const errorEl = document.getElementById("post-error");
   errorEl.textContent = "";
-
-  if (!title) return;
-  if (!Number.isInteger(expiresDays) || expiresDays < 1) return;
-  if (!Number.isInteger(expiresHours) || expiresHours < 1) return;
-
-  const imageRequired = type === "buy" || type === "lend";
-  if (imageRequired && !imageFile) {
-    errorEl.textContent = t("error.generic");
-    return;
-  }
+  if (!title || !Number.isInteger(expiresDays) || expiresDays < 1 || !Number.isInteger(expiresHours) || expiresHours < 1) return;
+  if ((type === "buy" || type === "lend") && !imageFile) { errorEl.textContent = t("error.generic"); return; }
 
   const btn = document.getElementById("post-submit");
-  btn.disabled = true;
-  btn.textContent = "…";
+  btn.disabled = true; btn.textContent = "…";
 
   let image_url = "";
   if (imageFile) {
     const uploadRes = await API.uploadPostImage(imageFile);
     if (!uploadRes || !uploadRes.ok) {
-      btn.disabled = false;
-      btn.textContent = t("action.save");
-      const msg = uploadRes ? await parseError(uploadRes) : t("error.generic");
-      errorEl.textContent = msg;
+      btn.disabled = false; btn.textContent = t("action.save");
+      errorEl.textContent = uploadRes ? await parseError(uploadRes) : t("error.generic");
       return;
     }
-    const uploadData = await uploadRes.json();
-    image_url = uploadData.image_url || "";
+    image_url = (await uploadRes.json()).image_url || "";
   }
 
-  const res = await API.createPost({
-    type,
-    title,
-    price,
-    image_url,
-    expires_in: `${expiresDays} ${String(expiresHours).padStart(2, "0")}:00:00`,
-  });
-
-  btn.disabled = false;
-  btn.textContent = t("action.save");
-
-  if (!res || !res.ok) {
-    const msg = await parseError(res);
-    errorEl.textContent = msg;
-    return;
-  }
-
+  const res = await API.createPost({ type, title, price, image_url, expires_in: `${expiresDays} ${String(expiresHours).padStart(2,"0")}:00:00` });
+  btn.disabled = false; btn.textContent = t("action.save");
+  if (!res || !res.ok) { errorEl.textContent = await parseError(res); return; }
   location.hash = "#/feed";
 }

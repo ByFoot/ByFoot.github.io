@@ -145,10 +145,13 @@ const API = {
     return apiFetch("/chats/");
   },
 
-  async createChat(recipient_id, text) {
+  async createChat(recipient, text, { byUsername = false } = {}) {
+    const payload = byUsername
+      ? { recipient_username: recipient, text }
+      : { recipient_id: recipient, text };
     return apiFetch("/chats/", {
       method: "POST",
-      body: JSON.stringify({ recipient_id, text }),
+      body: JSON.stringify(payload),
     });
   },
 

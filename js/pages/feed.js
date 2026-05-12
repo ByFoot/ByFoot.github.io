@@ -129,14 +129,14 @@ async function sendMessage() {
   const btn = document.getElementById("msg-send");
   btn.disabled = true;
 
-  const recipient_id = post.author_id;
-  if (!recipient_id) {
+  const recipient_username = post.author_username;
+  if (!recipient_username) {
     document.getElementById("msg-error").textContent = t("error.generic");
     btn.disabled = false;
     return;
   }
 
-  const res = await API.createChat(recipient_id, text);
+  const res = await API.createChat(recipient_username, text, { byUsername: true });
   btn.disabled = false;
 
   if (!res || !res.ok) {

@@ -4,10 +4,6 @@ const GOOGLE_CLIENT_ID = "571570955047-jonv2fck6vnr8cksg0famtfpoj61p1d0.apps.goo
 
 function renderLogin() {
   document.getElementById("app-nav").style.display = "none";
-  const theme = document.documentElement.dataset.theme || "dark";
-  const moonIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
-  const sunIcon  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
-
   const neighborIcon = `<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" width="16" height="16"><path d="M2 16c0-3.3 3.6-6 8-6s8 2.7 8 6"/><circle cx="10" cy="6" r="3.5"/></svg>`;
   const tradeIcon    = `<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" width="16" height="16"><path d="M3 7h14M3 13h14M7 3l-4 4 4 4M13 9l4 4-4 4"/></svg>`;
   const lockIcon     = `<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" width="16" height="16"><rect x="4" y="9" width="12" height="9" rx="2"/><path d="M7 9V6a3 3 0 1 1 6 0v3"/></svg>`;
@@ -38,25 +34,6 @@ function renderLogin() {
         background: radial-gradient(ellipse at center, rgba(232,130,12,0.07) 0%, transparent 65%);
         pointer-events: none;
       }
-
-      .login-theme-btn {
-        position: fixed;
-        top: calc(14px + var(--safe-t));
-        right: 14px;
-        width: 32px;
-        height: 32px;
-        border-radius: var(--r-m);
-        background: var(--surface);
-        border: 1px solid var(--border2);
-        color: var(--muted);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        z-index: 10;
-        transition: color 0.14s, background 0.14s;
-      }
-      .login-theme-btn:hover { color: var(--text); background: var(--surface2); }
 
       .login-card {
         width: 100%;
@@ -208,10 +185,6 @@ function renderLogin() {
     </style>
 
     <div class="login-page">
-      <button class="login-theme-btn" id="login-theme-toggle" aria-label="Toggle theme">
-        ${theme === "light" ? moonIcon : sunIcon}
-      </button>
-
       <div class="login-card">
 
         <div class="login-brand">
@@ -281,13 +254,6 @@ function renderLogin() {
 }
 
 function initLogin() {
-  document.getElementById("login-theme-toggle")?.addEventListener("click", () => {
-    const current = document.documentElement.dataset.theme || "dark";
-    const next = current === "dark" ? "light" : "dark";
-    document.documentElement.dataset.theme = next;
-    localStorage.setItem("theme", next);
-    ROUTER.navigate("/login");
-  });
   initGoogleSignIn();
 }
 

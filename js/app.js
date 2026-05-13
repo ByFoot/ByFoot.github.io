@@ -105,6 +105,8 @@ function shouldShowInstallTip() {
   return true;
 }
 
+const SHARE_ICON_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" style="display:inline-block;vertical-align:middle;margin:0 2px"><path d="M12 3v13"/><polyline points="7 8 12 3 17 8"/><path d="M5 13v6a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-6"/></svg>`;
+
 function showInstallTip() {
   if (!shouldShowInstallTip()) return;
   if (localStorage.getItem("install_tip_dismissed") === "1") return;
@@ -116,15 +118,17 @@ function showInstallTip() {
   banner.id = "install-tip";
   banner.className = "install-tip";
   banner.innerHTML = `
-    <div class="install-tip__content">
+    <div class="install-tip__inner">
       <div class="install-tip__text">
-        <strong>${t("install.tip_title")}</strong>
-        <span>${t("install.tip_body")}</span>
+        <strong class="install-tip__title">Open in Safari</strong>
+        <span class="install-tip__body">Tap ${SHARE_ICON_SVG} Share &rarr; <strong>Add to Home Screen</strong> to install ByFoot</span>
       </div>
-      <button class="btn btn--ghost btn--sm" id="install-tip-dismiss">${t("install.tip_dismiss")}</button>
+      <button class="install-tip__close" id="install-tip-dismiss" aria-label="Dismiss">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
   `;
-  document.body.appendChild(banner);
+  document.body.prepend(banner);
 
   document.getElementById("install-tip-dismiss")?.addEventListener("click", () => {
     localStorage.setItem("install_tip_dismissed", "1");

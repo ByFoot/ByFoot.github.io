@@ -49,7 +49,7 @@
   --red: #dc2626; --green: #16a34a;
 }
 
-html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 body {
   font-family: var(--ff); background: var(--bg); color: var(--text);
   min-height: 100dvh; overflow-x: hidden; line-height: 1.5;

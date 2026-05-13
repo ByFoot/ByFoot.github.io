@@ -36,16 +36,35 @@
 .type-btn--lend:hover,  .type-btn--lend.type-btn--active   { border-color: var(--lend);   color: var(--lend);   background: rgba(34,197,94,.09); }
 .type-btn--borrow:hover,.type-btn--borrow.type-btn--active { border-color: var(--borrow); color: var(--borrow); background: rgba(168,85,247,.09); }
 
-/* Global theme toggle (top-right, always visible) */
-.global-theme-btn {
-  position: fixed; top: calc(var(--safe-t) + 10px); right: 14px; z-index: 60;
-  width: 32px; height: 32px; border-radius: var(--r-m);
-  background: var(--surface2); border: 1px solid var(--border2);
-  color: var(--muted); display: flex; align-items: center; justify-content: center;
+/* Install tip banner */
+.install-tip {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border2);
+  box-shadow: 0 2px 16px rgba(0,0,0,.14);
+  padding: calc(env(safe-area-inset-top, 0px) + 10px) 14px 10px;
+  animation: install-tip-in 0.3s cubic-bezier(.22,1,.36,1);
 }
-.global-theme-btn:hover { background: var(--surface); color: var(--text); }
-/* On chat detail, vote buttons occupy top-right; push theme toggle left of them */
-body:has(.chat-detail-page) .global-theme-btn { display: none; }
+@keyframes install-tip-in {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+.install-tip__inner {
+  display: flex; align-items: center; gap: 12px; max-width: 480px; margin: 0 auto;
+}
+.install-tip__text { flex: 1; line-height: 1.35; }
+.install-tip__title { display: block; font-size: 0.82rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.install-tip__body  { font-size: 0.78rem; color: var(--muted); }
+.install-tip__body strong { color: var(--text); font-weight: 600; }
+.install-tip__close {
+  flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
+  background: var(--surface); border: 1px solid var(--border2);
+  color: var(--muted); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background 0.15s, color 0.15s;
+}
+.install-tip__close:hover { background: var(--surface2); color: var(--text); }
+/* Offset page content so banner doesn't overlap */
+body:has(.install-tip) #app { padding-top: calc(env(safe-area-inset-top, 0px) + 70px); }
 
 /* Chat list with rep */
 

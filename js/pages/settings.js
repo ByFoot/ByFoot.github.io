@@ -27,6 +27,7 @@ function renderSettings() {
           </div>
           <div class="settings-row">
             <button class="btn btn--ghost btn--full" id="location-update-btn">${t("settings.location")}</button>
+            <div id="settings-location-display" class="settings-location-display"></div>
             <div id="settings-location-msg" class="success-msg"></div>
           </div>
         </section>

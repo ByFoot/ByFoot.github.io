@@ -36,7 +36,14 @@
 .type-btn--lend:hover,  .type-btn--lend.type-btn--active   { border-color: var(--lend);   color: var(--lend);   background: rgba(34,197,94,.09); }
 .type-btn--borrow:hover,.type-btn--borrow.type-btn--active { border-color: var(--borrow); color: var(--borrow); background: rgba(168,85,247,.09); }
 
-/* Install tip banner */
+/* Location display in settings */
+.settings-location-display {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-family: var(--fm);
+  margin-top: 6px;
+  min-height: 1em;
+}
 .install-tip {
   position: fixed; top: 0; left: 0; right: 0; z-index: 200;
   background: var(--surface2);

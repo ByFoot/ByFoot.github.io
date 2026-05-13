@@ -136,19 +136,24 @@ function showInstallTip() {
   });
 }
 
-function hasLocation() {
-  const me = window.APP.me;
-  if (me?.lat != null && me?.lng != null) return true;
-  return localStorage.getItem("has_location") === "1";
+async function hasLocationPermission() {
+  if (!navigator.permissions) return false; // fallback: old browser, assume not granted
+  try {
+    const result = await navigator.permissions.query({ name: "geolocation" });
+    return result.state === "granted";
+  } catch {
+    return false;
+  }
 }
 
-function ensureLocationGate() {
+async function ensureLocationGate() {
   if (!window.APP.jwt) {
     hideLocationGate();
     return;
   }
 
-  if (hasLocation()) {
+  const hasPermission = await hasLocationPermission();
+  if (hasPermission) {
     hideLocationGate();
     return;
   }
@@ -190,26 +195,27 @@ function requestLocationOnce() {
 
   navigator.geolocation.getCurrentPosition(
     async (pos) => {
-      const res = await API.patchLocation(pos.coords.latitude, pos.coords.longitude);
-      if (res && res.ok) {
-        window.APP.me = window.APP.me || {};
-        window.APP.me.lat = pos.coords.latitude;
-        window.APP.me.lng = pos.coords.longitude;
-        localStorage.setItem("has_location", "1");
-        hideLocationGate();
-      } else if (errorEl) {
-        const msg = res ? await parseError(res) : t("error.generic");
-        errorEl.textContent = msg;
-        document.getElementById("location-enable-btn")?.addEventListener("click", requestLocationOnce, { once: true });
+      const { latitude, longitude } = pos.coords;
+      // Only patch server if it doesn't have coords yet
+      const needsPatch = window.APP.me?.lat == null;
+      if (needsPatch) {
+        const res = await API.patchLocation(latitude, longitude);
+        if (!res || !res.ok) {
+          if (errorEl) {
+            errorEl.textContent = res ? await parseError(res) : t("error.generic");
+            document.getElementById("location-enable-btn")?.addEventListener("click", requestLocationOnce, { once: true });
+          }
+          return;
+        }
       }
+      window.APP.me = window.APP.me || {};
+      window.APP.me.lat = latitude;
+      window.APP.me.lng = longitude;
+      hideLocationGate();
     },
     (err) => {
       if (!errorEl) return;
-      if (err?.code === 1) {
-        errorEl.textContent = t("location.denied");
-      } else {
-        errorEl.textContent = t("location.error");
-      }
+      errorEl.textContent = err?.code === 1 ? t("location.denied") : t("location.error");
       document.getElementById("location-enable-btn")?.addEventListener("click", requestLocationOnce, { once: true });
     },
     { enableHighAccuracy: true, timeout: 10000 }
@@ -262,9 +268,6 @@ async function boot() {
       const res = await API.getMe();
       if (res && res.ok) {
         window.APP.me = await res.json();
-        if (window.APP.me?.lat != null && window.APP.me?.lng != null) {
-          localStorage.setItem("has_location", "1");
-        }
         initPushNotifications({ promptPermission: false });
       } else {
         logout();

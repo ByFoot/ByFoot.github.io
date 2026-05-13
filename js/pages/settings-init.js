@@ -52,15 +52,45 @@ async function initSettings() {
     else { const data = await res.json(); window.APP.me.username = data.username; }
   });
 
+  // Show current location with reverse geocode if coords exist
+  async function renderLocationDisplay(lat, lng) {
+    const displayEl = document.getElementById("settings-location-display");
+    if (!displayEl) return;
+    if (lat == null || lng == null) { displayEl.textContent = ""; return; }
+    displayEl.textContent = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+    try {
+      const r = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+        { headers: { "Accept-Language": I18N.current || "en", "User-Agent": "ByFoot/1.0" } }
+      );
+      if (!r.ok) return;
+      const data = await r.json();
+      const addr = data.address || {};
+      const label = [addr.neighbourhood || addr.suburb, addr.city || addr.town || addr.village]
+        .filter(Boolean).join(", ");
+      if (label) displayEl.textContent = `${lat.toFixed(4)}, ${lng.toFixed(4)} — ${label}`;
+    } catch { /* silently ignore — coords already shown */ }
+  }
+
+  const me = window.APP.me;
+  renderLocationDisplay(me?.lat, me?.lng);
+
   document.getElementById("location-update-btn")?.addEventListener("click", () => {
     const msgEl = document.getElementById("settings-location-msg");
     msgEl.textContent = "…"; msgEl.className = "success-msg";
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
-        const res = await API.patchLocation(pos.coords.latitude, pos.coords.longitude);
-        msgEl.textContent = (res && res.ok) ? t("settings.location_update") : t("settings.location_error");
-        if (!res || !res.ok) msgEl.className = "error-msg";
-        else { window.APP.me.lat = pos.coords.latitude; window.APP.me.lng = pos.coords.longitude; localStorage.setItem("has_location","1"); }
+        const { latitude, longitude } = pos.coords;
+        const res = await API.patchLocation(latitude, longitude);
+        if (res && res.ok) {
+          window.APP.me.lat = latitude;
+          window.APP.me.lng = longitude;
+          msgEl.textContent = t("settings.location_update");
+          renderLocationDisplay(latitude, longitude);
+        } else {
+          msgEl.textContent = t("settings.location_error");
+          msgEl.className = "error-msg";
+        }
       },
       () => { msgEl.textContent = t("settings.location_error"); msgEl.className = "error-msg"; }
     );

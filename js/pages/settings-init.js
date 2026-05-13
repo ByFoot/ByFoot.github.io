@@ -80,9 +80,22 @@ async function initSettings() {
 
   renderLocationDisplay(me?.lat, me?.lng);
 
-  document.getElementById("location-update-btn")?.addEventListener("click", () => {
+  document.getElementById("location-update-btn")?.addEventListener("click", async () => {
     const msgEl = document.getElementById("settings-location-msg");
     msgEl.textContent = "…"; msgEl.className = "success-msg";
+
+    // Check permission state first; request it if not yet granted
+    if (navigator.permissions) {
+      try {
+        const status = await navigator.permissions.query({ name: "geolocation" });
+        if (status.state === "denied") {
+          msgEl.textContent = t("settings.location_error");
+          msgEl.className = "error-msg";
+          return;
+        }
+      } catch { /* old browser — fall through to getCurrentPosition which prompts itself */ }
+    }
+
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         const { latitude, longitude } = pos.coords;
@@ -90,6 +103,7 @@ async function initSettings() {
         if (res && res.ok) {
           window.APP.me.lat = latitude;
           window.APP.me.lng = longitude;
+          hideLocationGate();
           msgEl.textContent = t("settings.location_update");
           renderLocationDisplay(latitude, longitude);
         } else {
@@ -97,7 +111,8 @@ async function initSettings() {
           msgEl.className = "error-msg";
         }
       },
-      () => { msgEl.textContent = t("settings.location_error"); msgEl.className = "error-msg"; }
+      () => { msgEl.textContent = t("settings.location_error"); msgEl.className = "error-msg"; },
+      { enableHighAccuracy: true, timeout: 10000 }
     );
   });
 

@@ -295,6 +295,19 @@ async function handleSocialLogin(apiFn) {
     syncPushToken(); initPushNotifications({ promptPermission: true });
     const meRes = await API.getMe();
     if (meRes && meRes.ok) window.APP.me = await meRes.json();
+    if (window.APP.me?.lat == null && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          const { latitude, longitude } = pos.coords;
+          const r = await API.patchLocation(latitude, longitude);
+          if (r && r.ok) {
+            window.APP.me.lat = latitude;
+            window.APP.me.lng = longitude;
+          }
+        },
+        () => {} // user declined — ensureLocationGate will show on feed
+      );
+    }
     location.hash = "#/feed";
   } catch (e) { showError(document.querySelector(".login-actions"), t("error.generic")); }
 }

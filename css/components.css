@@ -135,6 +135,8 @@ body:has(.install-tip) #app { padding-top: calc(env(safe-area-inset-top, 0px) + 
 .settings-row { display: flex; flex-direction: column; gap: 7px; }
 .settings-toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .settings-toggle-label { font-size: 0.88rem; }
+.settings-unit { font-size: 0.875rem; color: var(--muted); align-self: center; }
+.settings-hint { font-size: 0.82rem; color: var(--muted); margin: 0; }
 .pro-desc { font-size: 0.84rem; color: var(--muted); line-height: 1.55; }
 
 /* Location gate */

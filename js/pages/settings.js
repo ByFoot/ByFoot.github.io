@@ -46,8 +46,10 @@ function renderSettings() {
         <section class="settings-section">
           <h3 class="settings-section-title">${t("settings.chat_expiry")}</h3>
           <div class="settings-row">
+            <p class="settings-hint">${t("settings.chat_expiry_hint")}</p>
             <div class="settings-inline">
               <input class="input input--sm" type="number" id="chat-expiry" min="1" max="30">
+              <span class="settings-unit">${t("settings.days")}</span>
               <button class="btn btn--ghost btn--sm" id="chat-expiry-save">${t("action.save")}</button>
             </div>
             <div id="chat-expiry-error" class="error-msg"></div>

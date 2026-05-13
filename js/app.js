@@ -136,56 +136,60 @@ function showInstallTip() {
   });
 }
 
-async function hasLocationPermission() {
-  if (!navigator.permissions) return false; // fallback: old browser, assume not granted
-  try {
-    const result = await navigator.permissions.query({ name: "geolocation" });
-    return result.state === "granted";
-  } catch {
-    return false;
-  }
+// Request location from the OS (triggers native prompt if needed),
+// patch the server if we got a new/moved fix, store coords in APP.me.
+function requestAndStoreLocation({ force = false, onSuccess = null } = {}) {
+  if (!window.APP.jwt || !navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const { latitude, longitude } = pos.coords;
+      const me = window.APP.me;
+      const needsPatch = force || me?.lat == null || me?.lng == null ||
+        Math.abs(latitude - me.lat) > 0.002 || Math.abs(longitude - me.lng) > 0.002;
+      if (needsPatch) {
+        const res = await API.patchLocation(latitude, longitude);
+        if (!res || !res.ok) return;
+      }
+      window.APP.me = me || {};
+      window.APP.me.lat = latitude;
+      window.APP.me.lng = longitude;
+      hideLocationGate();
+      if (onSuccess) onSuccess(latitude, longitude);
+    },
+    (err) => {
+      // code 1 = user denied in OS — show the in-app gate
+      if (err?.code === 1) showLocationGate();
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 600000 }
+  );
 }
 
-async function ensureLocationGate() {
-  if (!window.APP.jwt) {
-    hideLocationGate();
-    return;
-  }
-
-  const hasPermission = await hasLocationPermission();
-  if (hasPermission) {
-    hideLocationGate();
-    return;
-  }
-
-  let gate = document.getElementById("location-gate");
-  if (!gate) {
-    gate = document.createElement("div");
-    gate.id = "location-gate";
-    gate.className = "location-gate";
-    gate.innerHTML = `
-      <div class="location-gate__card">
-        <h3 class="location-gate__title">${t("location.required_title")}</h3>
-        <p class="location-gate__text">${t("location.required_body")}</p>
-        <div class="location-gate__actions">
-          <button class="btn btn--primary btn--full" id="location-enable-btn">${t("location.enable")}</button>
-        </div>
-        <div class="error-msg" id="location-gate-error"></div>
+function showLocationGate() {
+  if (!window.APP.jwt) return;
+  if (document.getElementById("location-gate")) return;
+  const gate = document.createElement("div");
+  gate.id = "location-gate";
+  gate.className = "location-gate";
+  gate.innerHTML = `
+    <div class="location-gate__card">
+      <h3 class="location-gate__title">${t("location.required_title")}</h3>
+      <p class="location-gate__text">${t("location.required_body")}</p>
+      <div class="location-gate__actions">
+        <button class="btn btn--primary btn--full" id="location-enable-btn">${t("location.enable")}</button>
       </div>
-    `;
-    document.body.appendChild(gate);
-
-    // Auto-dismiss if the user grants permission via browser settings
-    if (navigator.permissions) {
-      navigator.permissions.query({ name: "geolocation" }).then(status => {
-        status.addEventListener("change", () => {
-          if (status.state === "granted") ensureLocationGate();
-        });
-      }).catch(() => {});
-    }
-
-    document.getElementById("location-enable-btn")?.addEventListener("click", requestLocationOnce, { once: true });
+      <div class="error-msg" id="location-gate-error"></div>
+    </div>
+  `;
+  document.body.appendChild(gate);
+  if (navigator.permissions) {
+    navigator.permissions.query({ name: "geolocation" }).then(status => {
+      status.addEventListener("change", () => {
+        if (status.state === "granted") requestAndStoreLocation();
+      });
+    }).catch(() => {});
   }
+  document.getElementById("location-enable-btn")
+    ?.addEventListener("click", () => requestAndStoreLocation(), { once: true });
 }
 
 function hideLocationGate() {
@@ -193,43 +197,7 @@ function hideLocationGate() {
   if (gate) gate.remove();
 }
 
-function requestLocationOnce() {
-  const errorEl = document.getElementById("location-gate-error");
-  if (errorEl) errorEl.textContent = "";
 
-  if (!navigator.geolocation) {
-    if (errorEl) errorEl.textContent = t("location.error");
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition(
-    async (pos) => {
-      const { latitude, longitude } = pos.coords;
-      // Only patch server if it doesn't have coords yet
-      const needsPatch = window.APP.me?.lat == null;
-      if (needsPatch) {
-        const res = await API.patchLocation(latitude, longitude);
-        if (!res || !res.ok) {
-          if (errorEl) {
-            errorEl.textContent = res ? await parseError(res) : t("error.generic");
-            document.getElementById("location-enable-btn")?.addEventListener("click", requestLocationOnce, { once: true });
-          }
-          return;
-        }
-      }
-      window.APP.me = window.APP.me || {};
-      window.APP.me.lat = latitude;
-      window.APP.me.lng = longitude;
-      hideLocationGate();
-    },
-    (err) => {
-      if (!errorEl) return;
-      errorEl.textContent = err?.code === 1 ? t("location.denied") : t("location.error");
-      document.getElementById("location-enable-btn")?.addEventListener("click", requestLocationOnce, { once: true });
-    },
-    { enableHighAccuracy: true, timeout: 10000 }
-  );
-}
 
 async function initPushNotifications({ promptPermission = false } = {}) {
   if (!window.APP.jwt) return;
@@ -291,13 +259,17 @@ async function boot() {
   const hash = location.hash.slice(1) || "/feed";
   ROUTER.navigate(hash);
   showInstallTip();
-  ensureLocationGate();
 
-  // Listen for hash changes
+  // Request location once on boot if server doesn't have it yet.
+  // getCurrentPosition triggers the OS prompt naturally — no probing needed.
+  if (window.APP.jwt && window.APP.me?.lat == null) {
+    requestAndStoreLocation();
+  }
+
+  // Listen for hash changes — no location check here; already handled on boot/login
   window.addEventListener("hashchange", () => {
     ROUTER.navigate(location.hash.slice(1) || "/feed");
     showInstallTip();
-    ensureLocationGate();
   });
 }
 

@@ -46,6 +46,7 @@
   "settings.pro_soon": "Bientôt",
   "settings.location_update": "Localisation mise à jour",
   "settings.location_error": "Impossible d'obtenir la position",
+  "settings.location_not_set": "Aucune position définie — appuyez sur le bouton ci-dessous pour la définir",
   "settings.minutes": "min à pied",
   "location.required_title": "Localisation requise",
   "location.required_body": "ByFoot a besoin de votre position pour afficher les annonces proches.",

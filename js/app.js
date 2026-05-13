@@ -174,9 +174,18 @@ async function ensureLocationGate() {
       </div>
     `;
     document.body.appendChild(gate);
-  }
 
-  document.getElementById("location-enable-btn")?.addEventListener("click", requestLocationOnce, { once: true });
+    // Auto-dismiss if the user grants permission via browser settings
+    if (navigator.permissions) {
+      navigator.permissions.query({ name: "geolocation" }).then(status => {
+        status.addEventListener("change", () => {
+          if (status.state === "granted") ensureLocationGate();
+        });
+      }).catch(() => {});
+    }
+
+    document.getElementById("location-enable-btn")?.addEventListener("click", requestLocationOnce, { once: true });
+  }
 }
 
 function hideLocationGate() {

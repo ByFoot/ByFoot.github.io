@@ -56,7 +56,10 @@ async function initSettings() {
   async function renderLocationDisplay(lat, lng) {
     const displayEl = document.getElementById("settings-location-display");
     if (!displayEl) return;
-    if (lat == null || lng == null) { displayEl.textContent = ""; return; }
+    if (lat == null || lng == null) {
+      displayEl.textContent = t("settings.location_not_set");
+      return;
+    }
     displayEl.textContent = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
     try {
       const r = await fetch(
@@ -66,13 +69,15 @@ async function initSettings() {
       if (!r.ok) return;
       const data = await r.json();
       const addr = data.address || {};
-      const label = [addr.neighbourhood || addr.suburb, addr.city || addr.town || addr.village]
-        .filter(Boolean).join(", ");
-      if (label) displayEl.textContent = `${lat.toFixed(4)}, ${lng.toFixed(4)} — ${label}`;
+      const label = [
+        addr.road || addr.pedestrian,
+        addr.neighbourhood || addr.suburb,
+        addr.city || addr.town || addr.village
+      ].filter(Boolean).join(", ");
+      if (label) displayEl.textContent = label;
     } catch { /* silently ignore — coords already shown */ }
   }
 
-  const me = window.APP.me;
   renderLocationDisplay(me?.lat, me?.lng);
 
   document.getElementById("location-update-btn")?.addEventListener("click", () => {

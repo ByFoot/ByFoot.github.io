@@ -46,6 +46,7 @@
   "settings.pro_soon": "Coming soon",
   "settings.location_update": "Location updated",
   "settings.location_error": "Could not get location",
+  "settings.location_not_set": "No location set — tap the button below to set it",
   "settings.minutes": "min walk",
   "location.required_title": "Location required",
   "location.required_body": "ByFoot needs your location to show nearby posts and chats.",

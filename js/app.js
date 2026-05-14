@@ -315,6 +315,15 @@ async function boot() {
   window.addEventListener("hashchange", () => {
     ROUTER.navigate(location.hash.slice(1) || "/feed");
     showInstallTip();
+    // Register push listener on first navigation after login
+    if (window.APP.jwt && window.Notification && Notification.permission === "default") {
+      console.log("[Push] registering click listener on hashchange");
+      document.addEventListener("click", function askPush() {
+        console.log("[Push] click caught, calling initPushNotifications");
+        document.removeEventListener("click", askPush);
+        initPushNotifications({ promptPermission: true });
+      }, { once: true });
+    }
   });
 
   // Request push permission on the next user tap after login.

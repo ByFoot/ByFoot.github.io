@@ -316,6 +316,16 @@ async function boot() {
     ROUTER.navigate(location.hash.slice(1) || "/feed");
     showInstallTip();
   });
+
+  // Request push permission on the next user tap after login.
+  // iOS requires Notification.requestPermission() inside a direct gesture —
+  // a once-only document listener is the least intrusive way to catch one.
+  if (window.APP.jwt && window.Notification && Notification.permission === "default") {
+    document.addEventListener("click", function askPush() {
+      document.removeEventListener("click", askPush);
+      initPushNotifications({ promptPermission: true });
+    }, { once: true });
+  }
 }
 
 document.addEventListener("DOMContentLoaded", boot);

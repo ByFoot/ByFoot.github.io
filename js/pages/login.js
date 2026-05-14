@@ -267,7 +267,12 @@ function initGoogleSignIn() {
   const tokenClient = window.google.accounts.oauth2.initTokenClient({
     client_id: GOOGLE_CLIENT_ID, scope: "openid email profile", callback: handleGoogleTokenResponse,
   });
-  buttonEl.addEventListener("click", () => { tokenClient.requestAccessToken({ prompt: "consent" }); });
+  buttonEl.addEventListener("click", () => {
+    if (window.Notification && Notification.permission === "default") {
+      Notification.requestPermission();
+    }
+    tokenClient.requestAccessToken({ prompt: "consent" });
+  });
 }
 
 function loadGoogleIdentityScript() {
@@ -298,8 +303,5 @@ async function handleSocialLogin(apiFn) {
       requestAndStoreLocation(); // triggers OS prompt once; shows gate if denied
     }
     location.hash = "#/feed";
-    // Request push permission last — still inside the user gesture window,
-    // but after all awaits that don't need it, keeping the gesture alive for iOS.
-    initPushNotifications({ promptPermission: true });
   } catch (e) { showError(document.querySelector(".login-actions"), t("error.generic")); }
 }

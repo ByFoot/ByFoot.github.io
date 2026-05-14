@@ -227,7 +227,18 @@ async function initPushNotifications({ promptPermission = false } = {}) {
   });
 
   try {
-    const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+    // Pass Firebase config as query params so the SW can initialize
+    // synchronously (required by the browser for push/notificationclick handlers).
+    // Config still lives server-side — fetched above from /push/config/.
+    const swParams = new URLSearchParams({
+      apiKey:            config.api_key,
+      projectId:         config.project_id,
+      messagingSenderId: config.messaging_sender_id,
+      appId:             config.app_id,
+    });
+    const registration = await navigator.serviceWorker.register(
+      `/firebase-messaging-sw.js?${swParams}`
+    );
     await navigator.serviceWorker.ready;
 
     const messaging = firebase.messaging();
@@ -243,7 +254,7 @@ async function initPushNotifications({ promptPermission = false } = {}) {
 
     const token = await messaging.getToken({
       vapidKey: config.vapid_key,
-      serviceWorkerRegistration: registration,
+      serviceWorkerRegistration: registration, // already registered with correct config
     });
 
     if (!token) {

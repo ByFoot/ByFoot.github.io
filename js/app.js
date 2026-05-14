@@ -216,8 +216,10 @@ async function initPushNotifications({ promptPermission = false } = {}) {
   }
 
   const configRes = await API.getPushConfig();
-  if (!configRes.ok) return;
+  console.log("[Push] getPushConfig status:", configRes?.status);
+  if (!configRes.ok) { console.log("[Push] bail: getPushConfig failed"); return; }
   const config = await configRes.json();
+  console.log("[Push] config received, initializing Firebase...");
 
   // Delete any stale Firebase app (e.g. initialized without config on a
   // previous boot) then always reinitialize with the fresh config from the API.

@@ -299,9 +299,6 @@ async function handleSocialLogin(apiFn) {
     localStorage.setItem("jwt", data.access); localStorage.setItem("refresh", data.refresh);
     const meRes = await API.getMe();
     if (meRes && meRes.ok) window.APP.me = await meRes.json();
-    if (window.APP.me?.lat == null) {
-      requestAndStoreLocation(); // triggers OS prompt once; shows gate if denied
-    }
     location.hash = "#/feed";
     // Register a once-only click listener to request push permission on next tap.
     if (window.Notification && Notification.permission === "default") {

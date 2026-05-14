@@ -200,26 +200,20 @@ function hideLocationGate() {
 
 
 async function initPushNotifications({ promptPermission = false } = {}) {
-  console.log("[Push] start — promptPermission:", promptPermission);
-  if (!window.APP.jwt) { console.log("[Push] bail: no jwt"); return; }
-  if (typeof firebase === 'undefined') { console.log("[Push] bail: firebase undefined"); return; }
-  if (!navigator.serviceWorker) { console.log("[Push] bail: no serviceWorker"); return; }
-  if (!window.Notification) { console.log("[Push] bail: no Notification API"); return; }
-  console.log("[Push] Notification.permission:", Notification.permission);
-  if (Notification.permission === "denied") { console.log("[Push] bail: denied"); return; }
+  if (!window.APP.jwt) return;
+  if (typeof firebase === 'undefined') return;
+  if (!navigator.serviceWorker) return;
+  if (!window.Notification) return;
+  if (Notification.permission === "denied") return;
   if (Notification.permission !== "granted") {
-    if (!promptPermission) { console.log("[Push] bail: not granted, no prompt"); return; }
-    console.log("[Push] requesting permission...");
+    if (!promptPermission) return;
     const permission = await Notification.requestPermission();
-    console.log("[Push] permission result:", permission);
     if (permission !== "granted") return;
   }
 
   const configRes = await API.getPushConfig();
-  console.log("[Push] getPushConfig status:", configRes?.status);
-  if (!configRes.ok) { console.log("[Push] bail: getPushConfig failed"); return; }
+  if (!configRes.ok) return;
   const config = await configRes.json();
-  console.log("[Push] config received, initializing Firebase...");
 
   // Delete any stale Firebase app (e.g. initialized without config on a
   // previous boot) then always reinitialize with the fresh config from the API.
@@ -274,7 +268,6 @@ async function initPushNotifications({ promptPermission = false } = {}) {
 
     const res = await API.patchPushToken(token);
     if (res && res.ok) {
-      console.log("[Push] Token saved to server ✓");
     } else {
       console.error("[Push] patchPushToken failed:", res?.status);
     }
@@ -313,16 +306,17 @@ async function boot() {
     requestAndStoreLocation();
   }
 
-  // Listen for hash changes — no location check here; already handled on boot/login
+  // Listen for hash changes
   window.addEventListener("hashchange", () => {
     ROUTER.navigate(location.hash.slice(1) || "/feed");
     showInstallTip();
+    // Request location if not yet set — fires naturally after login/navigation
+    if (window.APP.jwt && window.APP.me?.lat == null) {
+      requestAndStoreLocation();
+    }
     // Register push listener on first navigation after login
-    console.log("[Push] hashchange — jwt:", !!window.APP.jwt, "permission:", window.Notification ? Notification.permission : "no Notification API");
     if (window.APP.jwt && window.Notification && Notification.permission === "default") {
-      console.log("[Push] registering click listener on hashchange");
       document.addEventListener("click", function askPush() {
-        console.log("[Push] click caught, calling initPushNotifications");
         document.removeEventListener("click", askPush);
         initPushNotifications({ promptPermission: true });
       }, { once: true });
@@ -332,11 +326,8 @@ async function boot() {
   // Request push permission on the next user tap after login.
   // iOS requires Notification.requestPermission() inside a direct gesture —
   // a once-only document listener is the least intrusive way to catch one.
-  console.log("[Push] boot check — jwt:", !!window.APP.jwt, "Notification:", typeof Notification, "permission:", window.Notification ? Notification.permission : "N/A");
   if (window.APP.jwt && window.Notification && Notification.permission === "default") {
-    console.log("[Push] registering click listener");
     document.addEventListener("click", function askPush() {
-      console.log("[Push] click caught, calling initPushNotifications");
       document.removeEventListener("click", askPush);
       initPushNotifications({ promptPermission: true });
     }, { once: true });

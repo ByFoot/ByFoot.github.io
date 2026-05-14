@@ -200,13 +200,18 @@ function hideLocationGate() {
 
 
 async function initPushNotifications({ promptPermission = false } = {}) {
-  if (!window.APP.jwt) return;
-  if (typeof firebase === 'undefined' || !navigator.serviceWorker || !window.Notification) return;
-
-  if (Notification.permission === "denied") return;
+  console.log("[Push] start — promptPermission:", promptPermission);
+  if (!window.APP.jwt) { console.log("[Push] bail: no jwt"); return; }
+  if (typeof firebase === 'undefined') { console.log("[Push] bail: firebase undefined"); return; }
+  if (!navigator.serviceWorker) { console.log("[Push] bail: no serviceWorker"); return; }
+  if (!window.Notification) { console.log("[Push] bail: no Notification API"); return; }
+  console.log("[Push] Notification.permission:", Notification.permission);
+  if (Notification.permission === "denied") { console.log("[Push] bail: denied"); return; }
   if (Notification.permission !== "granted") {
-    if (!promptPermission) return;
+    if (!promptPermission) { console.log("[Push] bail: not granted, no prompt"); return; }
+    console.log("[Push] requesting permission...");
     const permission = await Notification.requestPermission();
+    console.log("[Push] permission result:", permission);
     if (permission !== "granted") return;
   }
 

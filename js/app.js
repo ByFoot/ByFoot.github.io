@@ -201,7 +201,7 @@ function hideLocationGate() {
 
 async function initPushNotifications({ promptPermission = false } = {}) {
   if (!window.APP.jwt) return;
-  if (!window.firebase?.messaging || !navigator.serviceWorker || !window.Notification) return;
+  if (typeof firebase === 'undefined' || !navigator.serviceWorker || !window.Notification) return;
 
   if (Notification.permission === "denied") return;
   if (Notification.permission !== "granted") {

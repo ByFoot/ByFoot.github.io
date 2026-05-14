@@ -231,6 +231,16 @@ async function initPushNotifications({ promptPermission = false } = {}) {
     await navigator.serviceWorker.ready;
 
     const messaging = firebase.messaging();
+
+    // Show notification when tab is foregrounded
+    messaging.onMessage((payload) => {
+      const title = payload?.notification?.title || "ByFoot";
+      const body = payload?.notification?.body || "";
+      if (Notification.permission === "granted") {
+        new Notification(title, { body, icon: "/assets/favicon.png" });
+      }
+    });
+
     const token = await messaging.getToken({
       vapidKey: config.vapid_key,
       serviceWorkerRegistration: registration,

@@ -292,13 +292,14 @@ async function handleSocialLogin(apiFn) {
     const data = await res.json();
     window.APP.jwt = data.access; window.APP.refresh = data.refresh;
     localStorage.setItem("jwt", data.access); localStorage.setItem("refresh", data.refresh);
-    syncPushToken();
-    initPushNotifications({ promptPermission: true });
     const meRes = await API.getMe();
     if (meRes && meRes.ok) window.APP.me = await meRes.json();
     if (window.APP.me?.lat == null) {
       requestAndStoreLocation(); // triggers OS prompt once; shows gate if denied
     }
     location.hash = "#/feed";
+    // Request push permission last — still inside the user gesture window,
+    // but after all awaits that don't need it, keeping the gesture alive for iOS.
+    initPushNotifications({ promptPermission: true });
   } catch (e) { showError(document.querySelector(".login-actions"), t("error.generic")); }
 }

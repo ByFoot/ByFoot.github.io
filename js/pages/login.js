@@ -303,5 +303,14 @@ async function handleSocialLogin(apiFn) {
       requestAndStoreLocation(); // triggers OS prompt once; shows gate if denied
     }
     location.hash = "#/feed";
+    // Register a once-only click listener to request push permission on next tap.
+    if (window.Notification && Notification.permission === "default") {
+      console.log("[Push] registering click listener after login");
+      document.addEventListener("click", function askPush() {
+        console.log("[Push] click caught after login, calling initPushNotifications");
+        document.removeEventListener("click", askPush);
+        initPushNotifications({ promptPermission: true });
+      }, { once: true });
+    }
   } catch (e) { showError(document.querySelector(".login-actions"), t("error.generic")); }
 }

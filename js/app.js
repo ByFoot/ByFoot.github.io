@@ -320,8 +320,11 @@ async function boot() {
   // Request push permission on the next user tap after login.
   // iOS requires Notification.requestPermission() inside a direct gesture —
   // a once-only document listener is the least intrusive way to catch one.
+  console.log("[Push] boot check — jwt:", !!window.APP.jwt, "Notification:", typeof Notification, "permission:", window.Notification ? Notification.permission : "N/A");
   if (window.APP.jwt && window.Notification && Notification.permission === "default") {
+    console.log("[Push] registering click listener");
     document.addEventListener("click", function askPush() {
+      console.log("[Push] click caught, calling initPushNotifications");
       document.removeEventListener("click", askPush);
       initPushNotifications({ promptPermission: true });
     }, { once: true });

@@ -38,10 +38,10 @@
   "settings.notif_new_chat": "New messages",
   "settings.chat_expiry": "Chat expiry",
   "settings.go_pro": "Go Pro",
-  "settings.pro_desc": "Extended radius · Priority listings · Username change",
+  "settings.pro_desc": "Extended radius · Priority listings · Regular username change",
   "settings.pro_perk_radius": "Extended search radius",
   "settings.pro_perk_priority": "Priority listings",
-  "settings.pro_perk_username": "Username change",
+  "settings.pro_perk_username": "Regular username change",
   "settings.pro_unavailable": "Upgrade is not available yet.",
   "settings.pro_soon": "Coming soon",
   "settings.location_update": "Location updated",
@@ -83,5 +83,6 @@
   "time.minutes_ago": "{n} min ago",
   "time.hours_ago": "{n}h ago",
   "time.days_ago": "{n}d ago",
-  "action.logout": "Sign out"
+  "action.logout": "Sign out",
+  "settings.pro_perk_mobile": "Fund the mobile app"
 }

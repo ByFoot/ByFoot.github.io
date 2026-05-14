@@ -226,17 +226,33 @@ async function initPushNotifications({ promptPermission = false } = {}) {
     appId: config.app_id,
   });
 
-  const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
-  const messaging = firebase.messaging();
-  const token = await messaging.getToken({
-    vapidKey: config.vapid_key,
-    serviceWorkerRegistration: registration,
-  });
+  try {
+    const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+    await navigator.serviceWorker.ready;
 
-  if (!token) return;
-  window.APP.pushToken = token;
-  localStorage.setItem("push_token", token);
-  await API.patchPushToken(token);
+    const messaging = firebase.messaging();
+    const token = await messaging.getToken({
+      vapidKey: config.vapid_key,
+      serviceWorkerRegistration: registration,
+    });
+
+    if (!token) {
+      console.warn("[Push] getToken returned empty — check VAPID key and SW scope");
+      return;
+    }
+
+    window.APP.pushToken = token;
+    localStorage.setItem("push_token", token);
+
+    const res = await API.patchPushToken(token);
+    if (res && res.ok) {
+      console.log("[Push] Token saved to server ✓");
+    } else {
+      console.error("[Push] patchPushToken failed:", res?.status);
+    }
+  } catch (err) {
+    console.error("[Push] initPushNotifications error:", err);
+  }
 }
 
 // ── Boot ──────────────────────────────────────────────────────────────────────

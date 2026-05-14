@@ -316,6 +316,7 @@ async function boot() {
     ROUTER.navigate(location.hash.slice(1) || "/feed");
     showInstallTip();
     // Register push listener on first navigation after login
+    console.log("[Push] hashchange — jwt:", !!window.APP.jwt, "permission:", window.Notification ? Notification.permission : "no Notification API");
     if (window.APP.jwt && window.Notification && Notification.permission === "default") {
       console.log("[Push] registering click listener on hashchange");
       document.addEventListener("click", function askPush() {

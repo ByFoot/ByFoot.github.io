@@ -292,7 +292,8 @@ async function handleSocialLogin(apiFn) {
     const data = await res.json();
     window.APP.jwt = data.access; window.APP.refresh = data.refresh;
     localStorage.setItem("jwt", data.access); localStorage.setItem("refresh", data.refresh);
-    syncPushToken(); initPushNotifications({ promptPermission: true });
+    syncPushToken();
+    await initPushNotifications({ promptPermission: true });
     const meRes = await API.getMe();
     if (meRes && meRes.ok) window.APP.me = await meRes.json();
     if (window.APP.me?.lat == null) {

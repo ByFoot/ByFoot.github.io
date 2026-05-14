@@ -200,20 +200,24 @@ function hideLocationGate() {
 
 
 async function initPushNotifications({ promptPermission = false } = {}) {
-  if (!window.APP.jwt) return;
-  if (typeof firebase === 'undefined') return;
-  if (!navigator.serviceWorker) return;
-  if (!window.Notification) return;
-  if (Notification.permission === "denied") return;
+  console.log("[Push] start — jwt:", !!window.APP.jwt, "firebase:", typeof firebase !== 'undefined', "permission:", window.Notification ? Notification.permission : "unavailable", "promptPermission:", promptPermission);
+  if (!window.APP.jwt) { console.log("[Push] bail: no jwt"); return; }
+  if (typeof firebase === 'undefined' || !navigator.serviceWorker || !window.Notification) { console.log("[Push] bail: firebase/sw/Notification unavailable"); return; }
+  if (Notification.permission === "denied") { console.log("[Push] bail: permission denied"); return; }
   if (Notification.permission !== "granted") {
-    if (!promptPermission) return;
+    if (!promptPermission) { console.log("[Push] bail: not granted, promptPermission=false"); return; }
+    console.log("[Push] requesting permission...");
     const permission = await Notification.requestPermission();
+    console.log("[Push] permission result:", permission);
     if (permission !== "granted") return;
   }
+  console.log("[Push] permission ok, fetching config...");
 
   const configRes = await API.getPushConfig();
-  if (!configRes.ok) return;
+  console.log("[Push] getPushConfig:", configRes.status);
+  if (!configRes.ok) { console.log("[Push] bail: config fetch failed"); return; }
   const config = await configRes.json();
+  console.log("[Push] config ok, registering SW...");
 
   // Delete any stale Firebase app (e.g. initialized without config on a
   // previous boot) then always reinitialize with the fresh config from the API.
@@ -253,11 +257,13 @@ async function initPushNotifications({ promptPermission = false } = {}) {
       }
     });
 
+    console.log("[Push] calling getToken...");
     const token = await messaging.getToken({
       vapidKey: config.vapid_key,
       serviceWorkerRegistration: registration, // already registered with correct config
     });
 
+    console.log("[Push] token received:", token ? token.slice(0,20)+"..." : "EMPTY");
     if (!token) {
       console.warn("[Push] getToken returned empty — check VAPID key and SW scope");
       return;
@@ -268,6 +274,7 @@ async function initPushNotifications({ promptPermission = false } = {}) {
 
     const res = await API.patchPushToken(token);
     if (res && res.ok) {
+      console.log("[Push] Token saved to server ✓");
     } else {
       console.error("[Push] patchPushToken failed:", res?.status);
     }
@@ -310,27 +317,14 @@ async function boot() {
   window.addEventListener("hashchange", () => {
     ROUTER.navigate(location.hash.slice(1) || "/feed");
     showInstallTip();
-    // Request location if not yet set — fires naturally after login/navigation
-    if (window.APP.jwt && window.APP.me?.lat == null) {
-      requestAndStoreLocation();
-    }
-    // Register push listener on first navigation after login
-    if (window.APP.jwt && window.Notification && Notification.permission === "default") {
-      document.addEventListener("click", function askPush() {
-        document.removeEventListener("click", askPush);
-        initPushNotifications({ promptPermission: true });
-      }, { once: true });
-    }
   });
 
-  // Request push permission on the next user tap after login.
-  // iOS requires Notification.requestPermission() inside a direct gesture —
-  // a once-only document listener is the least intrusive way to catch one.
-  if (window.APP.jwt && window.Notification && Notification.permission === "default") {
-    document.addEventListener("click", function askPush() {
-      document.removeEventListener("click", askPush);
-      initPushNotifications({ promptPermission: true });
-    }, { once: true });
+  // Load eruda console for staff only
+  if (window.APP.me?.is_staff) {
+    const s = document.createElement("script");
+    s.src = "https://cdn.jsdelivr.net/npm/eruda";
+    s.onload = () => eruda.init();
+    document.head.appendChild(s);
   }
 }
 

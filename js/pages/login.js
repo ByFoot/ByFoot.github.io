@@ -267,12 +267,7 @@ function initGoogleSignIn() {
   const tokenClient = window.google.accounts.oauth2.initTokenClient({
     client_id: GOOGLE_CLIENT_ID, scope: "openid email profile", callback: handleGoogleTokenResponse,
   });
-  buttonEl.addEventListener("click", () => {
-    if (window.Notification && Notification.permission === "default") {
-      Notification.requestPermission();
-    }
-    tokenClient.requestAccessToken({ prompt: "consent" });
-  });
+  buttonEl.addEventListener("click", () => { tokenClient.requestAccessToken({ prompt: "consent" }); });
 }
 
 function loadGoogleIdentityScript() {
@@ -297,17 +292,14 @@ async function handleSocialLogin(apiFn) {
     const data = await res.json();
     window.APP.jwt = data.access; window.APP.refresh = data.refresh;
     localStorage.setItem("jwt", data.access); localStorage.setItem("refresh", data.refresh);
+    syncPushToken();
     const meRes = await API.getMe();
     if (meRes && meRes.ok) window.APP.me = await meRes.json();
     location.hash = "#/feed";
-    // Register a once-only click listener to request push permission on next tap.
-    if (window.Notification && Notification.permission === "default") {
-      console.log("[Push] registering click listener after login");
-      document.addEventListener("click", function askPush() {
-        console.log("[Push] click caught after login, calling initPushNotifications");
-        document.removeEventListener("click", askPush);
-        initPushNotifications({ promptPermission: true });
-      }, { once: true });
+    // Location and push happen after navigation so they don't wall the login
+    if (window.APP.me?.lat == null) {
+      requestAndStoreLocation();
     }
+    initPushNotifications({ promptPermission: true });
   } catch (e) { showError(document.querySelector(".login-actions"), t("error.generic")); }
 }

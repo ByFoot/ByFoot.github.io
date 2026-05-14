@@ -214,14 +214,17 @@ async function initPushNotifications({ promptPermission = false } = {}) {
   if (!configRes.ok) return;
   const config = await configRes.json();
 
-  if (!firebase.apps.length) {
-    firebase.initializeApp({
-      apiKey: config.api_key,
-      projectId: config.project_id,
-      messagingSenderId: config.messaging_sender_id,
-      appId: config.app_id,
-    });
+  // Delete any stale Firebase app (e.g. initialized without config on a
+  // previous boot) then always reinitialize with the fresh config from the API.
+  if (firebase.apps.length) {
+    await Promise.all(firebase.apps.map(a => a.delete()));
   }
+  firebase.initializeApp({
+    apiKey: config.api_key,
+    projectId: config.project_id,
+    messagingSenderId: config.messaging_sender_id,
+    appId: config.app_id,
+  });
 
   const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
   const messaging = firebase.messaging();

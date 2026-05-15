@@ -1,5 +1,24 @@
 // app.js - SPA router + global state
 
+// ── Log buffer — captures everything from first line, before any UI exists ────
+window.__LOGS = [];
+(function () {
+  const _log   = console.log.bind(console);
+  const _warn  = console.warn.bind(console);
+  const _error = console.error.bind(console);
+  function capture(level, args) {
+    const ts   = new Date().toISOString().slice(11, 23);
+    const text = Array.from(args).map(a => {
+      try { return typeof a === "object" ? JSON.stringify(a) : String(a); } catch (e) { return String(a); }
+    }).join(" ");
+    window.__LOGS.push("[" + ts + "] [" + level + "] " + text);
+    if (window.__LOGS.length > 500) window.__LOGS.shift();
+  }
+  console.log   = function () { capture("LOG",   arguments); _log(...arguments);   };
+  console.warn  = function () { capture("WARN",  arguments); _warn(...arguments);  };
+  console.error = function () { capture("ERROR", arguments); _error(...arguments); };
+})();
+
 window.APP = {
   jwt:     localStorage.getItem("jwt"),
   refresh: localStorage.getItem("refresh"),
@@ -22,10 +41,8 @@ const ROUTER = {
   navigate(hash) {
     const path = hash.startsWith("/") ? hash : "/" + hash;
 
-    // Cleanup poll if leaving chat
     if (typeof stopChatPoll === "function") stopChatPoll();
 
-    // Auth guard
     if (!window.APP.jwt && path !== "/login") {
       location.hash = "#/login";
       return;
@@ -43,7 +60,6 @@ const ROUTER = {
     const main = document.getElementById("app-main");
     const nav  = document.getElementById("app-nav");
 
-    // Show/hide nav
     if (path === "/login") {
       nav.style.display = "none";
     } else {
@@ -51,7 +67,6 @@ const ROUTER = {
       renderNav();
     }
 
-    // Render page
     const isChat = match.page === "chat-detail";
     main.style.overflow = isChat ? "hidden" : "";
     main.style.paddingBottom = isChat ? "0" : "";
@@ -62,21 +77,17 @@ const ROUTER = {
       case "chat-list":   main.innerHTML = renderChatList();         initChatList();         break;
       case "chat-detail": main.innerHTML = renderChatDetail(id);    initChatDetail(id);     break;
       case "profile-self":
-        if (!window.APP.me?.id) {
-          location.hash = "#/login";
-          break;
-        }
+        if (!window.APP.me?.id) { location.hash = "#/login"; break; }
         id = window.APP.me.id;
-        main.innerHTML = renderProfile(id);        initProfile({ id, isSelf: true });        break;
+        main.innerHTML = renderProfile(id); initProfile({ id, isSelf: true }); break;
       case "profile-username": {
         const username = decodeURIComponent(id || "");
-        main.innerHTML = renderProfile(username);        initProfile({ username });        break;
+        main.innerHTML = renderProfile(username); initProfile({ username }); break;
       }
-      case "profile":     main.innerHTML = renderProfile(id);        initProfile({ id });        break;
-      case "settings":    main.innerHTML = renderSettings();         initSettings();         break;
+      case "profile":   main.innerHTML = renderProfile(id);   initProfile({ id });   break;
+      case "settings":  main.innerHTML = renderSettings();    initSettings();        break;
     }
 
-    // Update nav active state after render
     if (path !== "/login") renderNav();
   }
 };
@@ -110,10 +121,8 @@ const SHARE_ICON_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColo
 function showInstallTip() {
   if (!shouldShowInstallTip()) return;
   if (localStorage.getItem("install_tip_dismissed") === "1") return;
-
   let banner = document.getElementById("install-tip");
   if (banner) return;
-
   banner = document.createElement("div");
   banner.id = "install-tip";
   banner.className = "install-tip";
@@ -129,15 +138,12 @@ function showInstallTip() {
     </div>
   `;
   document.body.prepend(banner);
-
   document.getElementById("install-tip-dismiss")?.addEventListener("click", () => {
     localStorage.setItem("install_tip_dismissed", "1");
     banner.remove();
   });
 }
 
-// Request location from the OS (triggers native prompt if needed),
-// patch the server if we got a new/moved fix, store coords in APP.me.
 function requestAndStoreLocation({ force = false, onSuccess = null } = {}) {
   if (!window.APP.jwt || !navigator.geolocation) return;
   navigator.geolocation.getCurrentPosition(
@@ -157,7 +163,6 @@ function requestAndStoreLocation({ force = false, onSuccess = null } = {}) {
       if (onSuccess) onSuccess(latitude, longitude);
     },
     (err) => {
-      // code 1 = user denied in OS — show the in-app gate
       if (err?.code === 1) showLocationGate();
     },
     { enableHighAccuracy: true, timeout: 10000, maximumAge: 600000 }
@@ -197,30 +202,48 @@ function hideLocationGate() {
   if (gate) gate.remove();
 }
 
+// ── Staff logs panel (call window.showStaffLogs() or wire to a button) ────────
+function showStaffLogs() {
+  const existing = document.getElementById("staff-logs-panel");
+  if (existing) { existing.remove(); return; }
+  const panel = document.createElement("div");
+  panel.id = "staff-logs-panel";
+  panel.style.cssText = "position:fixed;inset:0;z-index:9999;background:#000;color:#0f0;font-family:monospace;font-size:11px;overflow:auto;padding:16px;white-space:pre-wrap;word-break:break-all";
+  panel.innerHTML =
+    '<div style="margin-bottom:10px;display:flex;gap:8px;align-items:center">' +
+    '<span style="color:#fff;font-size:14px;font-weight:bold">Logs</span>' +
+    '<button id="slogs-copy"  style="padding:3px 10px;font-size:12px">Copy</button>' +
+    '<button id="slogs-clear" style="padding:3px 10px;font-size:12px">Clear</button>' +
+    '<button id="slogs-close" style="padding:3px 10px;font-size:12px;margin-left:auto">Close</button>' +
+    '</div>' +
+    '<div id="slogs-body">' + (window.__LOGS.join("\n") || "No logs yet.") + "</div>";
+  document.body.appendChild(panel);
+  document.getElementById("slogs-close").onclick = () => panel.remove();
+  document.getElementById("slogs-clear").onclick = () => { window.__LOGS = []; document.getElementById("slogs-body").textContent = "Cleared."; };
+  document.getElementById("slogs-copy").onclick  = () => navigator.clipboard?.writeText(window.__LOGS.join("\n")).then(() => alert("Copied!"));
+}
+window.showStaffLogs = showStaffLogs;
 
-
+// ── Push notifications ────────────────────────────────────────────────────────
 async function initPushNotifications({ promptPermission = false } = {}) {
-  console.log("[Push] start — jwt:", !!window.APP.jwt, "firebase:", typeof firebase !== 'undefined', "permission:", window.Notification ? Notification.permission : "unavailable", "promptPermission:", promptPermission);
+  console.log("[Push] start — jwt:", !!window.APP.jwt, "firebase:", typeof firebase !== "undefined", "permission:", window.Notification ? Notification.permission : "unavailable", "promptPermission:", promptPermission);
   if (!window.APP.jwt) { console.log("[Push] bail: no jwt"); return; }
-  if (typeof firebase === 'undefined' || !navigator.serviceWorker || !window.Notification) { console.log("[Push] bail: firebase/sw/Notification unavailable"); return; }
+  if (typeof firebase === "undefined" || !navigator.serviceWorker || !window.Notification) { console.log("[Push] bail: firebase/sw/Notification unavailable"); return; }
   if (Notification.permission === "denied") { console.log("[Push] bail: permission denied"); return; }
   if (Notification.permission !== "granted") {
-    if (!promptPermission) { console.log("[Push] bail: not granted, promptPermission=false"); return; }
+    if (!promptPermission) { console.log("[Push] bail: not granted and promptPermission=false"); return; }
     console.log("[Push] requesting permission...");
     const permission = await Notification.requestPermission();
     console.log("[Push] permission result:", permission);
     if (permission !== "granted") return;
   }
   console.log("[Push] permission ok, fetching config...");
-
   const configRes = await API.getPushConfig();
-  console.log("[Push] getPushConfig:", configRes.status);
+  console.log("[Push] getPushConfig status:", configRes.status);
   if (!configRes.ok) { console.log("[Push] bail: config fetch failed"); return; }
   const config = await configRes.json();
-  console.log("[Push] config ok, registering SW...");
+  console.log("[Push] config ok, initializing Firebase...");
 
-  // Delete any stale Firebase app (e.g. initialized without config on a
-  // previous boot) then always reinitialize with the fresh config from the API.
   if (firebase.apps.length) {
     await Promise.all(firebase.apps.map(a => a.delete()));
   }
@@ -232,23 +255,19 @@ async function initPushNotifications({ promptPermission = false } = {}) {
   });
 
   try {
-    // Pass Firebase config as query params so the SW can initialize
-    // synchronously (required by the browser for push/notificationclick handlers).
-    // Config still lives server-side — fetched above from /push/config/.
     const swParams = new URLSearchParams({
       apiKey:            config.api_key,
       projectId:         config.project_id,
       messagingSenderId: config.messaging_sender_id,
       appId:             config.app_id,
     });
-    const registration = await navigator.serviceWorker.register(
-      `/firebase-messaging-sw.js?${swParams}`
-    );
+    console.log("[Push] registering SW...");
+    const registration = await navigator.serviceWorker.register(`/firebase-messaging-sw.js?${swParams}`);
     await navigator.serviceWorker.ready;
+    console.log("[Push] SW ready, calling getToken...");
 
     const messaging = firebase.messaging();
 
-    // Show notification when tab is foregrounded
     messaging.onMessage((payload) => {
       const title = payload?.notification?.title || "ByFoot";
       const body = payload?.notification?.body || "";
@@ -257,29 +276,25 @@ async function initPushNotifications({ promptPermission = false } = {}) {
       }
     });
 
-    console.log("[Push] calling getToken...");
     const token = await messaging.getToken({
       vapidKey: config.vapid_key,
-      serviceWorkerRegistration: registration, // already registered with correct config
+      serviceWorkerRegistration: registration,
     });
 
-    console.log("[Push] token received:", token ? token.slice(0,20)+"..." : "EMPTY");
-    if (!token) {
-      console.warn("[Push] getToken returned empty — check VAPID key and SW scope");
-      return;
-    }
+    console.log("[Push] token:", token ? token.slice(0, 20) + "..." : "EMPTY");
+    if (!token) { console.warn("[Push] getToken returned empty — check VAPID key and SW scope"); return; }
 
     window.APP.pushToken = token;
     localStorage.setItem("push_token", token);
 
     const res = await API.patchPushToken(token);
     if (res && res.ok) {
-      console.log("[Push] Token saved to server ✓");
+      console.log("[Push] token saved to server ✓");
     } else {
       console.error("[Push] patchPushToken failed:", res?.status);
     }
   } catch (err) {
-    console.error("[Push] initPushNotifications error:", err);
+    console.error("[Push] error:", err);
   }
 }
 
@@ -293,6 +308,10 @@ async function boot() {
       if (res && res.ok) {
         window.APP.me = await res.json();
         initPushNotifications({ promptPermission: false });
+        // Location for returning users — only if not already set on server
+        if (window.APP.me?.lat == null) {
+          requestAndStoreLocation();
+        }
       } else {
         logout();
         return;
@@ -302,31 +321,14 @@ async function boot() {
     }
   }
 
-  // Handle initial hash
   const hash = location.hash.slice(1) || "/feed";
   ROUTER.navigate(hash);
   showInstallTip();
 
-  // Request location once on boot if server doesn't have it yet.
-  // getCurrentPosition triggers the OS prompt naturally — no probing needed.
-  if (window.APP.jwt && window.APP.me?.lat == null) {
-    requestAndStoreLocation();
-  }
-
-  // Listen for hash changes
   window.addEventListener("hashchange", () => {
     ROUTER.navigate(location.hash.slice(1) || "/feed");
     showInstallTip();
   });
-
-  // Load eruda console for staff only
-  if (window.APP.me?.is_staff && !window.__erudaLoaded) {
-    window.__erudaLoaded = true;
-    const s = document.createElement("script");
-    s.src = "https://cdn.jsdelivr.net/npm/eruda";
-    s.onload = () => eruda.init();
-    document.head.appendChild(s);
-  }
 }
 
 document.addEventListener("DOMContentLoaded", boot);

@@ -253,53 +253,108 @@ function renderLogin() {
   `;
 }
 
+
+// ── Login init (full rewrite) ─────────────────────────────────────────────────
+
 function initLogin() {
+  // GUARD: never request push permission on the login page.
+  // At this point there is no jwt. initPushNotifications bails immediately on
+  // that check, but being explicit here makes the intent crystal-clear.
+  console.log("[Login] initLogin — no push permission requests will be made here");
   initGoogleSignIn();
 }
 
 function initGoogleSignIn() {
   const buttonEl = document.getElementById("login-google");
   if (!buttonEl) return;
-  if (!window.google?.accounts?.id) {
-    loadGoogleIdentityScript().then(initGoogleSignIn).catch(() => showError(document.querySelector(".login-actions"), t("error.generic")));
+
+  if (!window.google?.accounts?.oauth2) {
+    loadGoogleIdentityScript()
+      .then(initGoogleSignIn)
+      .catch(() => showError(document.querySelector(".login-actions"), t("error.generic")));
     return;
   }
+
   const tokenClient = window.google.accounts.oauth2.initTokenClient({
-    client_id: GOOGLE_CLIENT_ID, scope: "openid email profile", callback: handleGoogleTokenResponse,
+    client_id: GOOGLE_CLIENT_ID,
+    scope:     "openid email profile",
+    callback:  handleGoogleTokenResponse,
   });
-  buttonEl.addEventListener("click", () => { tokenClient.requestAccessToken({ prompt: "consent" }); });
+
+  buttonEl.addEventListener("click", () => {
+    console.log("[Login] Google button clicked");
+    tokenClient.requestAccessToken({ prompt: "consent" });
+  });
 }
 
 function loadGoogleIdentityScript() {
   return new Promise((resolve, reject) => {
     const existing = document.getElementById("google-identity-script");
-    if (existing) { existing.addEventListener("load", resolve, { once: true }); existing.addEventListener("error", reject, { once: true }); if (window.google?.accounts?.id) resolve(); return; }
+    if (existing) {
+      if (window.google?.accounts?.oauth2) { resolve(); return; }
+      existing.addEventListener("load",  resolve, { once: true });
+      existing.addEventListener("error", reject,  { once: true });
+      return;
+    }
     const script = document.createElement("script");
-    script.id = "google-identity-script"; script.src = "https://accounts.google.com/gsi/client"; script.async = true; script.defer = true; script.onload = resolve; script.onerror = reject;
+    script.id      = "google-identity-script";
+    script.src     = "https://accounts.google.com/gsi/client";
+    script.async   = true;
+    script.defer   = true;
+    script.onload  = resolve;
+    script.onerror = reject;
     document.head.appendChild(script);
   });
 }
 
 function handleGoogleTokenResponse(response) {
-  if (!response?.access_token) { showError(document.querySelector(".login-actions"), t("error.generic")); return; }
+  console.log("[Login] Google token response received — access_token present:", !!response?.access_token);
+  if (!response?.access_token) {
+    showError(document.querySelector(".login-actions"), t("error.generic"));
+    return;
+  }
   handleSocialLogin(() => API.loginGoogle(response.access_token));
 }
 
 async function handleSocialLogin(apiFn) {
   try {
+    console.log("[Login] calling social login API…");
     const res = await apiFn();
-    if (!res.ok) { const msg = await parseError(res); showError(document.querySelector(".login-actions"), msg); return; }
+    if (!res.ok) {
+      const msg = await parseError(res);
+      showError(document.querySelector(".login-actions"), msg);
+      return;
+    }
     const data = await res.json();
-    window.APP.jwt = data.access; window.APP.refresh = data.refresh;
-    localStorage.setItem("jwt", data.access); localStorage.setItem("refresh", data.refresh);
+    window.APP.jwt     = data.access;
+    window.APP.refresh = data.refresh;
+    localStorage.setItem("jwt",     data.access);
+    localStorage.setItem("refresh", data.refresh);
+    console.log("[Login] jwt stored — fetching /me/");
+
     syncPushToken();
+
     const meRes = await API.getMe();
-    if (meRes && meRes.ok) window.APP.me = await meRes.json();
-    // Navigate first — location and push come after so they don't wall the login
+    if (meRes && meRes.ok) {
+      window.APP.me = await meRes.json();
+      console.log("[Login] /me/ ok — username:", window.APP.me?.username);
+    }
+
+    // Navigate to feed FIRST — get off the login page before doing anything else.
     location.hash = "#/feed";
+
+    // Location: only ask if missing
     if (window.APP.me?.lat == null) {
       requestAndStoreLocation();
     }
+
+    // Push: call with promptPermission:true — this is still within the user-gesture
+    // call stack started by the Google button click, so Safari allows it.
+    console.log("[Login] calling initPushNotifications(promptPermission:true) post-login");
     initPushNotifications({ promptPermission: true });
-  } catch (e) { showError(document.querySelector(".login-actions"), t("error.generic")); }
+
+  } catch (e) {
+    console.error("[Login] handleSocialLogin threw:", String(e));
+    showError(document.querySelector(".login-actions"), t("error.generic"));
+  }
 }

@@ -59,20 +59,6 @@ function renderSettings() {
 
         </section>
 
-        <!-- Appearance -->
-        <section class="settings-section">
-          <h3 class="settings-section-title">${t("settings.appearance") || "Appearance"}</h3>
-          <div class="settings-toggle-row">
-            <span class="settings-toggle-label">
-              ${isDark ? moonIcon : sunIcon}
-            </span>
-            <label class="toggle" id="theme-toggle-label">
-              <input type="checkbox" id="theme-toggle" ${isDark ? "checked" : ""}>
-              <span class="toggle-track"></span>
-            </label>
-          </div>
-        </section>
-
         <!-- Chat expiry -->
         <section class="settings-section">
           <h3 class="settings-section-title">${t("settings.chat_expiry")}</h3>

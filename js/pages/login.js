@@ -348,10 +348,10 @@ async function handleSocialLogin(apiFn) {
       requestAndStoreLocation();
     }
 
-    // Push: call with promptPermission:true — this is still within the user-gesture
-    // call stack started by the Google button click, so Safari allows it.
-    console.log("[Login] calling initPushNotifications(promptPermission:true) post-login");
-    initPushNotifications({ promptPermission: true });
+    // Show the push banner — slides in like the install tip, user taps Enable
+    // which is the actual gesture Safari requires before requestPermission() works.
+    console.log("[Login] showing push banner");
+    showPushBanner();
 
   } catch (e) {
     console.error("[Login] handleSocialLogin threw:", String(e));

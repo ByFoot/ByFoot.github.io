@@ -320,7 +320,8 @@ async function boot() {
   });
 
   // Load eruda console for staff only
-  if (window.APP.me?.is_staff) {
+  if (window.APP.me?.is_staff && !window.__erudaLoaded) {
+    window.__erudaLoaded = true;
     const s = document.createElement("script");
     s.src = "https://cdn.jsdelivr.net/npm/eruda";
     s.onload = () => eruda.init();

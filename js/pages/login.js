@@ -296,6 +296,14 @@ async function handleSocialLogin(apiFn) {
     const meRes = await API.getMe();
     if (meRes && meRes.ok) window.APP.me = await meRes.json();
     location.hash = "#/feed";
+    // Load eruda for staff
+    if (window.APP.me?.is_staff && !window.__erudaLoaded) {
+      window.__erudaLoaded = true;
+      const s = document.createElement("script");
+      s.src = "https://cdn.jsdelivr.net/npm/eruda";
+      s.onload = () => eruda.init();
+      document.head.appendChild(s);
+    }
     // Location and push happen after navigation so they don't wall the login
     if (window.APP.me?.lat == null) {
       requestAndStoreLocation();

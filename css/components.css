@@ -125,6 +125,8 @@ body:has(.install-tip) #app { padding-top: calc(env(safe-area-inset-top, 0px) + 
 .settings-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
 .settings-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-l); padding: 16px; display: flex; flex-direction: column; gap: 14px; }
 .settings-section--pro { border-color: rgba(232,130,12,.35); background: rgba(232,130,12,.05); }
+.settings-text-link { font-size: 0.85rem; color: var(--muted); text-decoration: none; text-align: center; padding: 4px 0; }
+.settings-text-link:hover { color: var(--text); }
 
 .pro-perks { list-style: none; margin: 0 0 16px; padding: 0; display: flex; flex-direction: column; gap: 10px; }
 .pro-perks li { font-size: 0.9rem; color: var(--text); display: flex; align-items: center; gap: 8px; }

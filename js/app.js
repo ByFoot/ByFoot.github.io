@@ -137,12 +137,17 @@ function showError(containerEl, msg) {
 }
 
 function isStandalonePwa() {
-  return window.matchMedia("(display-mode: standalone)").matches ||
-         window.navigator.standalone === true;
+  const standalone = window.matchMedia("(display-mode: standalone)").matches ||
+                     window.navigator.standalone === true;
+  // Persist the fact we've ever launched as PWA — so the tip never re-appears
+  // even if matchMedia flickers or the user checks via browser later.
+  if (standalone) localStorage.setItem("ever_standalone", "1");
+  return standalone || localStorage.getItem("ever_standalone") === "1";
 }
 function shouldShowInstallTip() {
-  if (isStandalonePwa()) return false;
-  if (!/iphone|ipad|ipod/i.test(navigator.userAgent)) return false;
+  if (!window.APP.jwt) return false;           // not logged in — don't show yet
+  if (isStandalonePwa()) return false;         // already installed
+  if (!/iphone|ipad|ipod/i.test(navigator.userAgent)) return false; // non-iOS
   return true;
 }
 
@@ -159,8 +164,8 @@ function showInstallTip() {
   banner.innerHTML =
     '<div class="install-tip__inner">' +
       '<div class="install-tip__text">' +
-        '<strong class="install-tip__title">Open in Safari</strong>' +
-        '<span class="install-tip__body">Tap ' + SHARE_ICON_SVG + ' Share &rarr; <strong>Add to Home Screen</strong> to install ByFoot</span>' +
+        '<strong class="install-tip__title">Receive message notifications</strong>' +
+        '<span class="install-tip__body">Tap ' + SHARE_ICON_SVG + ' Share &rarr; <strong>Add to Home Screen</strong></span>' +
       '</div>' +
       '<button class="install-tip__close" id="install-tip-dismiss" aria-label="Dismiss">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
@@ -482,11 +487,12 @@ async function boot() {
 
   const hash = location.hash.slice(1) || "/feed";
   ROUTER.navigate(hash);
-  showInstallTip();
+
+  // Show install tip only if already logged in at boot time (returning user)
+  if (window.APP.jwt) showInstallTip();
 
   window.addEventListener("hashchange", () => {
     ROUTER.navigate(location.hash.slice(1) || "/feed");
-    showInstallTip();
   });
 
   console.log("[Boot] done");
